@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Scent Finder · The Scent Shelf</title>
+  <meta name="description" content="Describe the perfume you want, pick notes, longevity and budget, and get a shortlist from The Scent Shelf.">
+  <meta name="theme-color" content="#FAF8F3">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="preload" href="./data/products.json" as="fetch" crossorigin="anonymous">
+  <link rel="modulepreload" href="./js/app.js">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap site-header__in">
+      <a class="logo" href="./index.html" aria-label="The Scent Shelf, home"><i></i>Scent Shelf</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./shop.html">Shop</a>
+        <a href="./find.html" aria-current="page">Finder</a>
+        <a class="btn btn--red" href="./index.html#join" data-waitlist>Waitlist</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="wrap">
+      <header class="page-head">
+        <p class="label">Scent Finder</p>
+        <h1>Tell us. <span class="it red">We'll pick.</span></h1>
+        <p>Answer as much or as little as you like. Everything stays on your device; nothing you type here is sent to us.</p>
+      </header>
+      <form class="finder" id="finder" novalidate>
+        <div class="q q--wide">
+          <span class="q__no">01</span>
+          <label for="q-text">Describe what you want</label>
+          <small>In your own words. For example: "fresh for office in summer, lasts long" or "sweet vanilla for date night".</small>
+          <textarea class="textarea" id="q-text" maxlength="300" placeholder="Something warm and sweet for winter evenings..."></textarea>
+        </div>
+        <fieldset class="q">
+          <span class="q__no">02</span>
+          <legend>Scent families</legend>
+          <small>Pick any that sound right.</small>
+          <div class="chips chips--wrap" id="q-family"></div>
+        </fieldset>
+        <fieldset class="q">
+          <span class="q__no">03</span>
+          <legend>Notes you love</legend>
+          <small>Pick any.</small>
+          <div class="chips chips--wrap" id="q-notes"></div>
+        </fieldset>
+        <fieldset class="q">
+          <span class="q__no">04</span>
+          <legend>How long should it last?</legend>
+          <div class="chips chips--wrap" id="q-long"></div>
+        </fieldset>
+        <fieldset class="q">
+          <span class="q__no">05</span>
+          <legend>Budget</legend>
+          <small>Choosing a budget hides perfumes whose price is not announced yet.</small>
+          <div class="chips chips--wrap" id="q-budget"></div>
+        </fieldset>
+        <fieldset class="q q--wide">
+          <span class="q__no">06</span>
+          <legend>Style</legend>
+          <div class="chips chips--wrap" id="q-who"></div>
+        </fieldset>
+        <div class="finder__go hero__cta">
+          <button class="btn btn--red btn--lg" type="submit">Show my shortlist</button>
+          <button class="btn btn--line btn--lg" type="button" id="finder-reset">Start again</button>
+        </div>
+      </form>
+      <div id="results" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <a class="logo" href="./index.html"><i></i>Scent Shelf</a>
+      <nav class="site-footer__links" aria-label="Footer">
+        <a href="./shop.html">Shop</a>
+        <a href="./find.html">Scent Finder</a>
+        <a href="./privacy.html">Privacy</a>
+        <a href="./terms.html">Terms</a>
+        <a href="./refunds.html">Refund and Cancellation</a>
+        <a href="./shipping.html">Shipping</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+      <p class="disclaimer">The Scent Shelf is an independent retailer and is not affiliated with or endorsed by the brands listed. Brand names are used only to identify genuine products.</p>
+      <p class="fineprint">© 2026 The Scent Shelf. Pre-launch: nothing is on sale yet. Prices shown are planned launch prices and may change before launch.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="./js/find.js"></script>
+</body>
+</html>

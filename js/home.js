@@ -1,39 +1,32 @@
-import { loadCatalog, mountCards, mountLive, paintFallback, observeReveal, whenIdle, inr, esc } from './app.js';
-import { bottleSpec } from './bottle-spec.js';
+import { loadCatalog, esc, observeReveal } from './app.js';
 
-// The hero bottle is the shop's own design, not a product.
-const HERO = bottleSpec({ id: 'the-scent-shelf-signature', brand: 'house', color: '#8B5CF6', bottle: { style: 'tear', cap: 'sphere', finish: 'gold' } });
+const shelves = document.getElementById('shelves');
+const marquee = document.getElementById('marquee');
 
-const heroHost = document.getElementById('hero-bottle');
-if (heroHost) {
-  paintFallback(heroHost, HERO);
-  whenIdle(() => mountLive(heroHost, HERO, { spin: true, scrollSpin: true, drag: true, bg: '#070A1A', glow: 0.5 }));
-}
+loadCatalog()
+  .then((catalog) => {
+    document.querySelectorAll('[data-count="products"]').forEach((el) => (el.textContent = catalog.products.length));
+    document.querySelectorAll('[data-count="brands"]').forEach((el) => (el.textContent = catalog.brands.length));
 
-const row = document.getElementById('house-row');
-if (row) {
-  loadCatalog()
-    .then((catalog) => {
-      row.innerHTML = catalog.brands
-        .map((brand, i) => {
-          const items = catalog.products.filter((p) => p.brand === brand.id);
-          if (!items.length) return '';
-          const from = Math.min(...items.map((p) => p.planned_price_inr));
-          return `
-<a class="house reveal" href="./shop.html#brand-${esc(brand.id)}" style="--i:${i}">
-  <span class="bottle bottle--card" data-bottle="${esc(items[0].id)}"></span>
-  <span class="house__meta">
-    <span class="house__name">${esc(brand.name)}</span>
-    <span class="house__blurb">${esc(brand.blurb || '')}</span>
-    <span class="house__count">${items.length} scents · planned launch prices from ${inr(from)}</span>
-  </span>
-</a>`;
-        })
-        .join('');
-      mountCards(catalog, row);
-      observeReveal(row);
-    })
-    .catch(() => {
-      row.innerHTML = '<p class="notice">The shelf could not be loaded. Please refresh the page.</p>';
-    });
-}
+    const names = catalog.brands.map((b) => '<span>' + esc(b.name) + '</span>').join('');
+    marquee.innerHTML = names + names;
+
+    const groups = [...new Set(catalog.brands.map((b) => b.group))];
+    const titles = { Arabic: 'Arabic houses', Designer: 'Designer houses', Niche: 'Niche houses' };
+    shelves.innerHTML = groups
+      .map((g, i) => {
+        const brands = catalog.brands.filter((b) => b.group === g);
+        return (
+          '<div class="shelf reveal">' +
+          '<p class="shelf__no">Shelf ' + String(i + 1).padStart(2, '0') + ' · ' + brands.length + ' houses</p>' +
+          '<h3 class="shelf__title">' + esc(titles[g] || g) + '</h3>' +
+          '<p class="shelf__brands">' + brands.map((b) => '<a href="./shop.html?brand=' + encodeURIComponent(b.id) + '">' + esc(b.name) + '</a>').join('') + '</p>' +
+          '</div>'
+        );
+      })
+      .join('');
+    observeReveal(shelves);
+  })
+  .catch(() => {
+    shelves.innerHTML = '<p class="notice">The shelf could not be loaded. Please refresh the page.</p>';
+  });

@@ -33,40 +33,41 @@ function template(catalog) {
         .filter((p) => p.brand === brand.id)
         .map(
           (p) =>
-            `<label class="pick"><input type="checkbox" name="perfumes" value="${esc(p.id)}"><span class="pick__name">${esc(p.name)}</span><span class="pick__meta">${esc(p.size_ml)} ml</span></label>`
+            `<label class="pick" data-s="${esc((brand.name + ' ' + p.name).toLowerCase())}"><input type="checkbox" name="perfumes" value="${esc(p.id)}"><span class="pick__name">${esc(p.name)}</span><span class="pick__meta">${esc(p.size_ml)} ml</span></label>`
         )
         .join('');
-      return `<div class="pick__brand">${esc(brand.name)}</div>${rows}`;
+      return `<div class="pick__group"><div class="pick__brand">${esc(brand.name)}</div>${rows}</div>`;
     })
     .join('');
 
   const amount = inr(DEPOSIT_AMOUNT_INR);
   return `
-<button class="icon-btn sheet__close" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+<button class="icon-btn sheet__close" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></button>
 <div class="wl" data-view="form">
-  <p class="eyebrow">Pre-launch waitlist</p>
+  <p class="label">Pre-launch waitlist</p>
   <h2 id="wl-title">Save your spot on the shelf</h2>
-  <p class="wl__lede">Free to join, nothing to pay. We'll message you when your picks are ready to order.</p>
+  <p>Free to join, nothing to pay. We'll message you when your picks are ready to order.</p>
   <p class="notice" id="wl-closed" hidden>The waitlist opens very soon. We're finishing setup, so we can't save your details just yet. Please check back shortly.</p>
   <form id="wl-form" novalidate>
     <div class="field">
       <label for="wl-name">Name</label>
-      <input id="wl-name" name="name" type="text" autocomplete="name" maxlength="80" required>
+      <input id="wl-name" name="name" class="input" type="text" autocomplete="name" maxlength="80" required>
       <p class="field__error" data-error="name" hidden></p>
     </div>
     <div class="field">
       <label for="wl-contact">Phone or email</label>
-      <input id="wl-contact" name="contact" type="text" autocomplete="on" autocapitalize="none" spellcheck="false" maxlength="120" required>
+      <input id="wl-contact" name="contact" class="input" type="text" autocomplete="on" autocapitalize="none" spellcheck="false" maxlength="120" required>
       <p class="field__error" data-error="contact" hidden></p>
     </div>
     <div class="field">
       <label for="wl-city">City</label>
-      <input id="wl-city" name="city" type="text" autocomplete="address-level2" maxlength="80" required>
+      <input id="wl-city" name="city" class="input" type="text" autocomplete="address-level2" maxlength="80" required>
       <p class="field__error" data-error="city" hidden></p>
     </div>
     <fieldset class="field">
       <legend>Which perfumes do you want? <span class="pick__count" id="wl-count"></span></legend>
-      <div class="picker" id="wl-picker" data-lenis-prevent>${picker}</div>
+      <input class="input" id="wl-filter" type="search" placeholder="Search a perfume or house" aria-label="Search perfumes" autocomplete="off">
+      <div class="picker" id="wl-picker">${picker}</div>
       <p class="field__error" data-error="perfumes" hidden></p>
     </fieldset>
     <div class="hp" aria-hidden="true">
@@ -79,18 +80,18 @@ function template(catalog) {
     </label>
     <p class="field__error" data-error="consent" hidden></p>
     <p class="form-error" id="wl-error" role="alert" hidden></p>
-    <button class="btn btn--primary btn--lg btn--block" type="submit" id="wl-submit">Join the waitlist</button>
+    <button class="btn btn--red btn--lg btn--block" type="submit" id="wl-submit">Join the waitlist</button>
     <p class="fineprint">We only collect what's on this form. It's never sold, and you can ask us to delete it at any time.</p>
   </form>
 </div>
 <div class="wl wl--done" data-view="done" hidden tabindex="-1">
-  <div class="wl__tick" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  <h2>You're on the list.</h2>
+  <p class="label">Done</p>
+  <h2>You're on <span class="it red">the list.</span></h2>
   <p class="wl__pos" id="wl-pos" hidden></p>
   <p id="wl-done-text"></p>
   <p class="notice" id="wl-demo" hidden>Demo mode: this ran on your own computer and nothing was saved. Connect the Google Sheet (see README) to collect real signups.</p>
   <div class="deposit" id="wl-deposit" hidden>
-    <p class="eyebrow">Optional</p>
+    <p class="label">Optional</p>
     <h3>Want to move up the list?</h3>
     <p>Pay ${amount} to move up the list and lock your order. Fully refundable, and it comes off the final price.</p>
     <ul>
@@ -98,10 +99,10 @@ function template(catalog) {
       <li>Refunded automatically if the product doesn't launch within ${esc(DEPOSIT_REFUND_DAYS)} days of your payment.</li>
       <li>Deducted in full from your final price.</li>
     </ul>
-    <a class="btn btn--primary btn--block" id="wl-pay" target="_blank" rel="noopener">Pay ${amount} deposit</a>
+    <a class="btn btn--red btn--block" id="wl-pay" target="_blank" rel="noopener">Pay ${amount} deposit</a>
     <p class="fineprint">Paid securely through Razorpay. Completely optional. See our <a href="./refunds.html" target="_blank" rel="noopener">Refund and Cancellation</a> page.</p>
   </div>
-  <button class="btn btn--ghost btn--block" type="button" data-close id="wl-done-close">Back to the shelf</button>
+  <button class="btn btn--line btn--block" type="button" data-close id="wl-done-close">Back to the shelf</button>
 </div>`;
 }
 
@@ -117,6 +118,18 @@ async function build() {
     document.body.appendChild(dialog);
     form = dialog.querySelector('#wl-form');
     form.addEventListener('submit', onSubmit);
+    dialog.querySelector('#wl-filter').addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      dialog.querySelectorAll('.pick__group').forEach((group) => {
+        let any = false;
+        group.querySelectorAll('.pick').forEach((row) => {
+          const show = !q || row.dataset.s.includes(q) || row.querySelector('input').checked;
+          row.hidden = !show;
+          if (show) any = true;
+        });
+        group.hidden = !any;
+      });
+    });
     form.addEventListener('change', (e) => {
       if (e.target.name === 'perfumes') updateCount();
     });
@@ -185,7 +198,7 @@ export async function open(ids = []) {
   const first = ids.length && form.querySelector('input[name="perfumes"]:checked');
   if (first) {
     const picker = dialog.querySelector('#wl-picker');
-    picker.scrollTop = Math.max(0, first.closest('.pick').offsetTop - picker.offsetTop - 44);
+    picker.scrollTop = Math.max(0, first.closest('.pick').offsetTop - 40);
   }
 }
 

@@ -4,29 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Shop the shelf · The Scent Shelf</title>
-  <meta name="description" content="All 25 bottles coming to The Scent Shelf, with planned launch prices. Everything is coming soon: join the waitlist for the ones you want.">
-  <meta name="theme-color" content="#070A1A">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Shop the shelf · The Scent Shelf">
-  <meta property="og:description" content="25 bottles from five Arabic perfume houses, coming soon to India. Join the waitlist.">
+  <meta name="description" content="Browse 560 perfumes from 28 houses with planned launch prices. Everything is coming soon: join the waitlist for the ones you want.">
+  <meta name="theme-color" content="#FAF8F3">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
   <link rel="stylesheet" href="./css/main.css">
   <link rel="preload" href="./data/products.json" as="fetch" crossorigin="anonymous">
   <link rel="modulepreload" href="./js/app.js">
-  <link rel="modulepreload" href="./js/bottle-spec.js">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap site-header__in">
-      <a class="logo" href="./index.html" aria-label="The Scent Shelf, home">
-        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M10 3h4v3h-4zM8.5 8.5A3 3 0 0 1 11 7h2a3 3 0 0 1 2.5 1.5l.7 1.2c.5.9.8 1.9.8 2.9V17a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4.4c0-1 .3-2 .8-2.9z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3 21h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <span>The Scent Shelf</span>
-      </a>
+      <a class="logo" href="./index.html" aria-label="The Scent Shelf, home"><i></i>Scent Shelf</a>
       <nav class="site-nav" aria-label="Main">
         <a href="./shop.html" aria-current="page">Shop</a>
-        <a class="btn btn--primary btn--sm" href="./index.html#join" data-waitlist>Join waitlist</a>
+        <a href="./find.html">Finder</a>
+        <a class="btn btn--red" href="./index.html#join" data-waitlist>Waitlist</a>
       </nav>
     </div>
   </header>
@@ -34,47 +30,33 @@
   <main id="main">
     <div class="wrap">
       <header class="page-head">
-        <p class="eyebrow">The shelf</p>
-        <h1>Twenty-five bottles, <em>coming soon.</em></h1>
-        <p>Nothing here is on sale yet. Every price is a planned launch price and may change before we open. Tap a bottle to turn it around, then join the waitlist for the ones you want.</p>
+        <p class="label">The shelf</p>
+        <h1>Everything, <span class="it red">coming soon.</span></h1>
+        <p>Nothing here is on sale yet. Prices are planned launch prices and may change before we open. Tap a name for details, then join the waitlist for the ones you want.</p>
       </header>
-      <nav class="chips" id="brand-chips" aria-label="Jump to a house"></nav>
-      <div id="shop-root">
-        <noscript><p class="notice">Please turn on JavaScript to see the shelf.</p></noscript>
+      <div class="tools">
+        <div class="tools__row">
+          <input class="input tools__search" id="f-search" type="search" placeholder="Search a perfume, house or note" aria-label="Search perfumes" autocomplete="off">
+          <select class="select" id="f-brand" aria-label="House"><option value="">All houses</option></select>
+          <select class="select" id="f-sort" aria-label="Sort">
+            <option value="">Sort: shelf order</option>
+            <option value="low">Price: low to high</option>
+            <option value="high">Price: high to low</option>
+            <option value="long">Longest lasting</option>
+          </select>
+        </div>
+        <div class="chips" id="f-family" role="group" aria-label="Scent family"></div>
       </div>
+      <div id="shop-root"><noscript><p class="notice">Please turn on JavaScript to see the shelf.</p></noscript></div>
     </div>
   </main>
 
-  <dialog class="sheet sheet--product" id="product-dialog" aria-labelledby="pd-name">
-    <button class="icon-btn sheet__close" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-    <div class="pd">
-      <div class="pd__stage">
-        <div class="bottle bottle--live" id="pd-bottle" aria-hidden="true"></div>
-        <p class="pd__hint" aria-hidden="true">Drag to rotate</p>
-      </div>
-      <div class="pd__info">
-        <p class="pill" id="pd-status">Coming soon · Join waitlist</p>
-        <p class="card__brand" id="pd-brand"></p>
-        <h2 id="pd-name"></h2>
-        <p class="card__size" id="pd-size"></p>
-        <p class="pd__line" id="pd-line"></p>
-        <p class="pd__desc" id="pd-desc"></p>
-        <div class="pd__price">
-          <span class="price__label">Planned launch price</span>
-          <span class="price__value" id="pd-price"></span>
-          <small>Not on sale yet. The final price is confirmed at launch.</small>
-        </div>
-        <button class="btn btn--primary btn--lg btn--block" type="button" id="pd-join" data-waitlist>Join waitlist</button>
-        <p class="fineprint">Free to join. No payment is taken.</p>
-      </div>
-    </div>
-  </dialog>
-
   <footer class="site-footer">
     <div class="wrap">
-      <a class="logo" href="./index.html"><span>The Scent Shelf</span></a>
+      <a class="logo" href="./index.html"><i></i>Scent Shelf</a>
       <nav class="site-footer__links" aria-label="Footer">
         <a href="./shop.html">Shop</a>
+        <a href="./find.html">Scent Finder</a>
         <a href="./privacy.html">Privacy</a>
         <a href="./terms.html">Terms</a>
         <a href="./refunds.html">Refund and Cancellation</a>

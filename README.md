@@ -9,14 +9,14 @@ It is a plain static site: HTML, CSS and JavaScript files, with no build step. W
 | File | What it is |
 | --- | --- |
 | `index.html` | Home page |
-| `shop.html` | All products, grouped by brand, plus the product view |
+| `shop.html` | The full catalogue with search, house, scent family and sort |
+| `find.html` | Scent Finder: describe what you want and get a shortlist |
 | `privacy.html`, `terms.html`, `refunds.html`, `shipping.html`, `contact.html` | Legal pages (placeholders marked `[TO CONFIRM]`) |
 | `data/products.json` | Brands and products. Edit this to add or change products |
 | `js/config.js` | Waitlist link, deposit switch, Razorpay link |
-| `js/bottle-spec.js`, `js/three/` | The generated 3D bottles |
+| `js/find.js` | The Scent Finder's matching rules |
 | `apps-script/Code.gs` | The script that saves waitlist signups into your Google Sheet |
 | `serve.ps1` | Runs the site on your own computer |
-
 ## Run it on your computer
 
 Right-click `serve.ps1` and choose **Run with PowerShell**, then open <http://localhost:5173/>. Close the window to stop. Nothing is installed.
@@ -25,10 +25,8 @@ Right-click `serve.ps1` and choose **Run with PowerShell**, then open <http://lo
 
 On your own computer the waitlist form runs in demo mode: it shows the success screen but saves nothing.
 
-Handy test addresses:
+Handy test address:
 
-- `http://localhost:5173/?3d=off` shows the static fallback bottles (what low-power phones get).
-- `http://localhost:5173/?3d=mid` shows the phone experience, `?3d=high` the desktop one.
 - `http://localhost:5173/?deposit=preview` shows the deposit offer after a demo signup, so you can read the wording. This only works on your own computer.
 
 ## Deploy
@@ -73,19 +71,29 @@ Open `data/products.json` and add an entry to `products`:
 
 ```json
 { "id": "lattafa-new-scent", "brand": "lattafa", "name": "New Scent", "size_ml": 100,
-  "concentration": "Eau de Parfum", "planned_price_inr": 2990, "status": "waitlist",
-  "color": "#C77B2B", "line": "One short line.", "description": "One or two sentences." }
+  "concentration": "Eau de Parfum", "for": "U", "planned_price_inr": 2990, "status": "waitlist",
+  "family": "sweet", "notes": ["vanilla", "amber", "musk"], "longevity": 4 }
 ```
 
 - `id` must be unique, lowercase, with dashes.
 - `brand` must match a brand `id` in the `brands` list at the top of the file.
+- `for` is `M`, `W` or `U` (anyone).
+- `planned_price_inr` can be `null`. The card then says "Announced at launch".
 - `status` stays `"waitlist"` until the store opens. Every product shows "Coming soon · Join waitlist".
-- `color` is the colour of the liquid. The bottle shape is generated from the brand's `bottleStyle` and the product id.
+- `family` is one of: fresh, citrus, aquatic, green, floral, fruity, sweet, spicy, woody, amber, musky, leather, oud.
+- `longevity` is 1 to 5. `family`, `notes` and `longevity` are what the Scent Finder matches on.
 
-To add a brand, add it to `brands` with a `bottleStyle` of `orb`, `facet`, `slab`, `column` or `tear`.
+To add a brand, add it to `brands` with a `group` of `Arabic`, `Designer` or `Niche`.
 
 Do not put marketplace prices, supplier prices or internal notes in this file. This repository is public.
 
+### Product photos
+
+Cards are text-only until a product has a photo. To add one, put the image in an `images` folder and add `"image": "./images/your-file.jpg"` to that product. Only use photos you have the right to use (your own, or ones your supplier has given you).
+
+### Where the catalogue came from
+
+Names, sizes and prices were collected on 13 November 2026 from public listings on Indian perfume retailers. Planned launch prices are the lowest listed price minus ₹350. Chanel, Diptyque, Bond No. 9 and a few others had no usable rupee price, so they show "Announced at launch". Scent family, notes and longevity were written from general knowledge and are estimates. All of it should be checked against your supplier's list before launch.
 ## Custom domain (later)
 
 Not active yet. When `thescentshelf.in` is ready:
@@ -107,19 +115,18 @@ Not active yet. When `thescentshelf.in` is ready:
 
 - Fill in every `[TO CONFIRM]` on the five legal pages (business name, address, contact email, grievance officer, retention period). The privacy notice needs a working email address before real signups are collected.
 - Connect the Google Sheet.
-- Check the product copy. These lines were written without confirmed scent notes and describe a mood only: Angham, Badee Al Oud Honor & Glory, 9 PM Elixir, Supremacy Collector's Edition, Supremacy Not Only Intense, all five Hawas, Spectre Ghost, Royal Blend Nero, Pacific Aura, Obsidian.
-- Check two product names against the supplier's list: Hawas Tropical and Vulcan Feu.
+- Check the catalogue against your supplier's list: names, sizes, prices, notes and longevity.
+- Only list brands you can actually supply. A waitlist for a product you cannot source is a promise you cannot keep.
 - Have a CA or lawyer review the legal pages before any money is collected.
 
 ## Rules the site follows
 
 - No fake scarcity: no stock counts, countdowns or "people viewing" numbers.
 - Prices are labelled "Planned launch price". No comparisons with other shops.
-- Bottles are original generated designs, not copies of real bottles, logos or product photos.
 - The waitlist collects only name, phone or email, city and chosen perfumes, behind an unticked consent box.
 
 ## Technical notes
 
-- three.js (3D) and Lenis (smooth scrolling on desktop) load from the jsDelivr CDN at pinned versions, and only when the device can use them. To host them yourself, download those two files into the repository and change the URLs at the top of `js/three/studio.js` and in `js/app.js`.
-- Devices are sorted into tiers in `js/app.js`: `static` (SVG bottles, no 3D download), `still` (3D drawn once, for reduced-motion settings), `mid` (phones) and `high` (desktops).
-- The header and footer are repeated in each HTML file. If you change a footer link, change it in all seven pages.
+- No JavaScript libraries. Typefaces load from Google Fonts.
+- The Scent Finder runs entirely in the visitor's browser. Nothing typed into it is sent anywhere.
+- The header and footer are repeated in each HTML file. If you change a footer link, change it in all eight pages.

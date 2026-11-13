@@ -1,95 +1,50 @@
-import { loadCatalog, mountCards, mountLive, paintFallback, openDialog, observeReveal, specFor, inr, esc, tier } from './app.js';
+import { loadCatalog, cardHTML, esc, FAMILIES } from './app.js';
 
 const rootEl = document.getElementById('shop-root');
-const chips = document.getElementById('brand-chips');
-const dialog = document.getElementById('product-dialog');
-const stage = document.getElementById('pd-bottle');
-
-// Nothing is in stock before launch, so every status reads the same honest way.
-const STATUS_LABEL = 'Coming soon · Join waitlist';
+const search = document.getElementById('f-search');
+const brandSel = document.getElementById('f-brand');
+const sortSel = document.getElementById('f-sort');
+const famChips = document.getElementById('f-family');
+const PAGE = 40;
 
 let catalog;
-let live = null;
-let liveLoading = false;
+let shown = PAGE;
+let family = '';
 
-function sizeLine(p) {
-  return [p.size_ml ? p.size_ml + ' ml' : '', p.concentration || ''].filter(Boolean).join(' · ');
-}
-
-function card(p, i) {
-  return `
-<article class="card reveal" style="--i:${i % 5}">
-  <button class="card__media" type="button" data-open="${esc(p.id)}" tabindex="-1" aria-hidden="true">
-    <span class="bottle bottle--card" data-bottle="${esc(p.id)}"></span>
-  </button>
-  <div class="card__body">
-    <p class="pill">${STATUS_LABEL}</p>
-    <p class="card__brand">${esc(p.brandInfo.name)}</p>
-    <h3 class="card__name"><button type="button" data-open="${esc(p.id)}">${esc(p.name)}</button></h3>
-    <p class="card__size">${esc(sizeLine(p))}</p>
-    <p class="card__line">${esc(p.line || '')}</p>
-    <p class="price"><span class="price__label">Planned launch price</span><span class="price__value">${inr(p.planned_price_inr)}</span></p>
-    <button class="btn btn--primary btn--block" type="button" data-waitlist="${esc(p.id)}">Join waitlist</button>
-  </div>
-</article>`;
+function matches() {
+  const q = search.value.trim().toLowerCase();
+  const brand = brandSel.value;
+  let list = catalog.products.filter((p) => {
+    if (brand && p.brand !== brand) return false;
+    if (family && p.family !== family) return false;
+    if (!q) return true;
+    const hay = (p.name + ' ' + p.brandInfo.name + ' ' + p.notes.join(' ') + ' ' + p.family).toLowerCase();
+    return q.split(/\s+/).every((word) => hay.includes(word));
+  });
+  const sort = sortSel.value;
+  const price = (p) => (p.planned_price_inr ? p.planned_price_inr : Infinity);
+  if (sort === 'low') list = list.slice().sort((a, b) => price(a) - price(b));
+  else if (sort === 'high') list = list.slice().sort((a, b) => (b.planned_price_inr || -1) - (a.planned_price_inr || -1));
+  else if (sort === 'long') list = list.slice().sort((a, b) => b.longevity - a.longevity);
+  return list;
 }
 
 function render() {
-  chips.innerHTML = catalog.brands
-    .filter((b) => catalog.products.some((p) => p.brand === b.id))
-    .map((b) => `<a class="chip" href="#brand-${esc(b.id)}">${esc(b.name)}</a>`)
-    .join('');
-  rootEl.innerHTML = catalog.brands
-    .map((brand) => {
-      const items = catalog.products.filter((p) => p.brand === brand.id);
-      if (!items.length) return '';
-      return `
-<section class="brand" id="brand-${esc(brand.id)}" aria-labelledby="h-${esc(brand.id)}">
-  <header class="brand__head reveal">
-    <h2 id="h-${esc(brand.id)}">${esc(brand.name)}</h2>
-    <p>${esc(brand.blurb || '')}</p>
-  </header>
-  <div class="grid">${items.map(card).join('')}</div>
-</section>`;
-    })
-    .join('');
-  mountCards(catalog, rootEl);
-  observeReveal(rootEl);
-}
-
-function openProduct(id, push = true) {
-  const p = catalog.byId.get(id);
-  if (!p) return;
-  const spec = specFor(p);
-  dialog.querySelector('#pd-brand').textContent = p.brandInfo.name;
-  dialog.querySelector('#pd-name').textContent = p.name;
-  dialog.querySelector('#pd-size').textContent = sizeLine(p);
-  dialog.querySelector('#pd-line').textContent = p.line || '';
-  dialog.querySelector('#pd-desc').textContent = p.description || '';
-  dialog.querySelector('#pd-price').textContent = inr(p.planned_price_inr);
-  dialog.querySelector('#pd-status').textContent = STATUS_LABEL;
-  dialog.querySelector('#pd-join').setAttribute('data-waitlist', p.id);
-  stage.classList.remove('was-dragged');
-  paintFallback(stage, spec);
-  openDialog(dialog);
-  if (push) history.replaceState(null, '', '#' + p.id);
-
-  if (live) {
-    live.setSpec(spec);
-  } else if (!liveLoading && tier !== 'static') {
-    liveLoading = true;
-    mountLive(stage, spec, { spin: true, drag: true }).then((instance) => {
-      live = instance;
-      liveLoading = false;
-      const current = catalog.byId.get(dialog.querySelector('#pd-join').getAttribute('data-waitlist'));
-      if (live && current) live.setSpec(specFor(current));
-    });
+  const list = matches();
+  if (!list.length) {
+    rootEl.innerHTML = '<p class="count">0 perfumes</p><p class="empty">Nothing on the shelf matches that. Try fewer filters.</p>';
+    return;
   }
+  const slice = list.slice(0, shown);
+  rootEl.innerHTML =
+    '<p class="count">' + list.length + ' perfume' + (list.length === 1 ? '' : 's') + ' · all coming soon</p>' +
+    '<div class="grid">' + slice.map((p) => cardHTML(p)).join('') + '</div>' +
+    (list.length > shown ? '<div class="more"><button class="btn btn--line btn--lg" type="button" id="more">Show more (' + (list.length - shown) + ' left)</button></div>' : '');
 }
 
-function openFromHash() {
-  const id = decodeURIComponent(location.hash.slice(1));
-  if (id && catalog.byId.has(id)) openProduct(id, false);
+function reset() {
+  shown = PAGE;
+  render();
 }
 
 async function init() {
@@ -99,23 +54,33 @@ async function init() {
     rootEl.innerHTML = '<p class="notice">The shelf could not be loaded. Please refresh the page.</p>';
     return;
   }
-  render();
+  const groups = [...new Set(catalog.brands.map((b) => b.group))];
+  brandSel.innerHTML = '<option value="">All 28 houses</option>' + groups.map((g) =>
+    '<optgroup label="' + esc(g) + '">' + catalog.brands.filter((b) => b.group === g).map((b) => '<option value="' + esc(b.id) + '">' + esc(b.name) + '</option>').join('') + '</optgroup>').join('');
+  brandSel.options[0].textContent = 'All ' + catalog.brands.length + ' houses';
+  famChips.innerHTML = '<button class="chip" type="button" data-fam="" aria-pressed="true">All</button>' +
+    Object.entries(FAMILIES).map(([k, v]) => '<button class="chip" type="button" data-fam="' + k + '" aria-pressed="false">' + v + '</button>').join('');
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('brand') && catalog.brands.some((b) => b.id === params.get('brand'))) brandSel.value = params.get('brand');
+  if (params.get('q')) search.value = params.get('q');
+
+  search.addEventListener('input', reset);
+  brandSel.addEventListener('change', reset);
+  sortSel.addEventListener('change', reset);
+  famChips.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-fam]');
+    if (!chip) return;
+    family = chip.dataset.fam;
+    famChips.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+    reset();
+  });
   rootEl.addEventListener('click', (e) => {
-    const opener = e.target.closest('[data-open]');
-    if (opener) openProduct(opener.getAttribute('data-open'));
+    if (e.target.id !== 'more') return;
+    shown += PAGE;
+    render();
   });
-  dialog.addEventListener('close', () => {
-    if (catalog.byId.has(decodeURIComponent(location.hash.slice(1)))) {
-      history.replaceState(null, '', location.pathname + location.search);
-    }
-  });
-  addEventListener('hashchange', openFromHash);
-  const hash = decodeURIComponent(location.hash.slice(1));
-  if (catalog.byId.has(hash)) openProduct(hash, false);
-  else if (hash) {
-    const target = document.getElementById(hash);
-    if (target) target.scrollIntoView();
-  }
+  render();
 }
 
 init();

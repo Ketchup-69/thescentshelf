@@ -1,45 +1,6 @@
-// Shared behaviour for every page: device tier, catalogue loading, bottle
-// mounting (SVG first, 3D when the device can take it), scroll motion, dialogs.
-import { bottleSpec, bottleSVG } from './bottle-spec.js';
-
+// Shared behaviour for every page: catalogue loading, product cards, dialogs, waitlist.
 const root = document.documentElement;
-
-// ---------------------------------------------------------------------------
-// Device tier
-//   static : SVG bottles only. No three.js download at all.
-//   still  : 3D rendered once per bottle, no automatic motion (reduced motion).
-//   mid    : phones and lighter laptops. Live hero, cards turn as you scroll.
-//   high   : desktops. Everything live.
-// Force one for testing with ?3d=off | still | mid | high
-// ---------------------------------------------------------------------------
-function detectTier() {
-  const forced = new URLSearchParams(location.search).get('3d');
-  if (forced === 'off' || forced === 'static') return 'static';
-  let ok = false;
-  try {
-    const c = document.createElement('canvas');
-    const gl = c.getContext('webgl2');
-    ok = !!gl;
-    const lose = gl && gl.getExtension('WEBGL_lose_context');
-    if (lose) lose.loseContext();
-  } catch (err) {
-    ok = false;
-  }
-  if (!ok) return 'static';
-  if (forced === 'high' || forced === 'mid' || forced === 'still') return forced;
-  const conn = navigator.connection;
-  if (conn && conn.saveData) return 'static';
-  const mem = navigator.deviceMemory || 4;
-  const cores = navigator.hardwareConcurrency || 4;
-  if (mem <= 2 || cores <= 2) return 'static';
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return 'still';
-  if (matchMedia('(pointer: coarse)').matches || innerWidth < 760 || cores <= 4 || mem <= 4) return 'mid';
-  return 'high';
-}
-
-export const tier = detectTier();
-export const motionOK = tier === 'high' || tier === 'mid';
-root.dataset.tier = tier;
+const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 if (motionOK) root.classList.add('js-motion');
 
 // ---------------------------------------------------------------------------
@@ -55,7 +16,12 @@ export function loadCatalog() {
       })
       .then((data) => {
         const brandById = new Map(data.brands.map((b) => [b.id, b]));
-        const products = data.products.map((p) => ({ ...p, brandInfo: brandById.get(p.brand) || { id: p.brand, name: p.brand } }));
+        const products = data.products.map((p, i) => ({
+          ...p,
+          no: i + 1,
+          notes: p.notes || [],
+          brandInfo: brandById.get(p.brand) || { id: p.brand, name: p.brand },
+        }));
         return { brands: data.brands, products, byId: new Map(products.map((p) => [p.id, p])) };
       });
   }
@@ -68,254 +34,145 @@ export function esc(value) {
   return String(value == null ? '' : value).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 }
 
-const specCache = new Map();
-export function specFor(product) {
-  let spec = specCache.get(product.id);
-  if (!spec) {
-    spec = bottleSpec(product, product.brandInfo);
-    specCache.set(product.id, spec);
-  }
-  return spec;
+export const FAMILIES = {
+  fresh: 'Fresh', citrus: 'Citrus', aquatic: 'Aquatic', green: 'Green', floral: 'Floral', fruity: 'Fruity',
+  sweet: 'Sweet', spicy: 'Spicy', woody: 'Woody', amber: 'Amber', musky: 'Musky', leather: 'Leather', oud: 'Oud',
+};
+export const WHO = { M: 'Leans masculine', W: 'Leans feminine', U: 'For anyone' };
+const SHORT = { 'Eau de Parfum': 'EDP', 'Eau de Toilette': 'EDT', 'Eau de Cologne': 'EDC', 'Extrait de Parfum': 'Extrait' };
+
+// Nothing is in stock before launch, so every product reads the same honest way.
+export const STATUS_LABEL = 'Coming soon · Join waitlist';
+
+export function dots(n) {
+  const v = Math.max(0, Math.min(5, Number(n) || 0));
+  return '<span class="dots" aria-label="' + v + ' out of 5">' + '●'.repeat(v) + '<i>' + '●'.repeat(5 - v) + '</i></span>';
+}
+
+export function priceHTML(p) {
+  return p.planned_price_inr
+    ? '<p class="price"><span>Planned launch price</span><strong>' + inr(p.planned_price_inr) + '</strong></p>'
+    : '<p class="price"><span>Planned launch price</span><strong class="tba">Announced at launch</strong></p>';
+}
+
+export function sizeLine(p) {
+  return [p.size_ml ? p.size_ml + ' ml' : '', SHORT[p.concentration] || p.concentration || ''].filter(Boolean).join(' ');
+}
+
+// One product card. `extra` is optional HTML shown above the brand (used by the finder).
+export function cardHTML(p, extra = '') {
+  const img = p.image
+    ? '<button class="card__img" type="button" data-open="' + esc(p.id) + '" tabindex="-1" aria-hidden="true"><img src="' + esc(p.image) + '" alt="" loading="lazy"></button>'
+    : '';
+  return (
+    '<article class="card">' + img +
+    '<div class="card__top"><span>No. ' + String(p.no).padStart(3, '0') + '</span><b>' + esc(FAMILIES[p.family] || '') + '</b></div>' +
+    extra +
+    '<p class="card__brand">' + esc(p.brandInfo.name) + '</p>' +
+    '<h3 class="card__name"><button type="button" data-open="' + esc(p.id) + '">' + esc(p.name) + '</button></h3>' +
+    '<p class="card__notes">' + esc(p.notes.join(' · ')) + '</p>' +
+    '<div class="specs"><div><span>' + esc(sizeLine(p)) + '</span><span>Lasts ' + dots(p.longevity) + '</span></div></div>' +
+    '<p class="status">' + STATUS_LABEL + '</p>' +
+    priceHTML(p) +
+    '<button class="btn btn--block" type="button" data-waitlist="' + esc(p.id) + '">Join waitlist</button>' +
+    '</article>'
+  );
 }
 
 // ---------------------------------------------------------------------------
-// Bottles
+// Dialogs
 // ---------------------------------------------------------------------------
-export function whenIdle(fn) {
-  const run = () => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 250));
-  if (document.readyState === 'complete') run();
-  else addEventListener('load', run, { once: true });
-}
-
-let threePromise;
-function loadThree() {
-  if (!threePromise) {
-    threePromise = import('./three/bottles.js').catch((err) => {
-      console.warn('3D view unavailable, keeping the static bottles.', err);
-      return null;
-    });
-  }
-  return threePromise;
-}
-
-let shelf = null;
-let shelfFailed = false;
-let svgCount = 0;
-const queue = [];
-
-async function flushCards() {
-  if (!queue.length || shelfFailed) return;
-  const mod = await loadThree();
-  if (!mod) return;
-  if (!shelf) {
-    try {
-      shelf = new mod.CardShelf({ tier });
-    } catch (err) {
-      shelfFailed = true;
-      console.warn('3D view unavailable, keeping the static bottles.', err);
-      return;
-    }
-  }
-  while (queue.length) {
-    const [host, spec] = queue.shift();
-    shelf.add(host, spec);
-  }
-  shelf.wake();
-}
-
-// Fills every <span class="bottle" data-bottle="product-id"> inside `scope`.
-export function mountCards(catalog, scope = document) {
-  scope.querySelectorAll('.bottle[data-bottle]:not([data-mounted])').forEach((host) => {
-    const product = catalog.byId.get(host.dataset.bottle);
-    if (!product) return;
-    host.dataset.mounted = '1';
-    const spec = specFor(product);
-    host.style.setProperty('--tint', spec.color);
-    host.insertAdjacentHTML('afterbegin', bottleSVG(spec, spec.id + '-' + svgCount++));
-    if (tier !== 'static') queue.push([host, spec]);
-  });
-  if (queue.length) whenIdle(flushCards);
-}
-
-export function paintFallback(host, spec) {
-  const old = host.querySelector('.bottle__svg');
-  if (old) old.remove();
-  host.style.setProperty('--tint', spec.color);
-  host.insertAdjacentHTML('afterbegin', bottleSVG(spec, 'live-' + spec.id + '-' + svgCount++));
-}
-
-export async function mountLive(host, spec, opts = {}) {
-  if (tier === 'static') return null;
-  const mod = await loadThree();
-  if (!mod) return null;
-  try {
-    return new mod.LiveBottle(host, spec, { tier, ...opts });
-  } catch (err) {
-    console.warn('3D view unavailable, keeping the static bottle.', err);
-    return null;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Scroll: smooth scrolling on desktop (Lenis), reveals, parallax
-// ---------------------------------------------------------------------------
-let lenis = null;
 let locks = 0;
-
-export function lockScroll() {
-  if (locks++ === 0) {
-    root.classList.add('is-locked');
-    if (lenis) lenis.stop();
-  }
-}
-export function unlockScroll() {
-  locks = Math.max(0, locks - 1);
-  if (locks === 0) {
-    root.classList.remove('is-locked');
-    if (lenis) lenis.start();
-  }
-}
-
 export function openDialog(dialog) {
   if (dialog.open) return;
   dialog.showModal();
-  lockScroll();
-  dialog.addEventListener('close', unlockScroll, { once: true });
+  if (locks++ === 0) root.classList.add('is-locked');
+  dialog.addEventListener('close', () => {
+    locks = Math.max(0, locks - 1);
+    if (locks === 0) root.classList.remove('is-locked');
+  }, { once: true });
 }
 
-function wireDialogs() {
-  document.addEventListener('click', (e) => {
-    const closer = e.target.closest('[data-close]');
-    if (closer) {
-      const dlg = closer.closest('dialog');
-      if (dlg) dlg.close();
-      return;
-    }
-    if (e.target instanceof HTMLDialogElement && e.target.open) {
-      const r = e.target.getBoundingClientRect();
-      const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
-      if (!inside) e.target.close();
-    }
-  });
-}
-
-async function initSmoothScroll() {
-  if (tier !== 'high' || matchMedia('(pointer: coarse)').matches) return;
-  try {
-    const mod = await import('https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.mjs');
-    const Lenis = mod.default;
-    lenis = new Lenis({ lerp: 0.11, wheelMultiplier: 1 });
-    if (locks > 0) lenis.stop();
-    const raf = (time) => {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    };
-    requestAnimationFrame(raf);
-  } catch (err) {
-    lenis = null; // native scrolling is a perfectly good fallback
+let productDialog;
+export async function openProduct(id) {
+  const catalog = await loadCatalog();
+  const p = catalog.byId.get(id);
+  if (!p) return;
+  if (!productDialog) {
+    productDialog = document.createElement('dialog');
+    productDialog.className = 'sheet';
+    productDialog.setAttribute('aria-labelledby', 'pd-name');
+    document.body.appendChild(productDialog);
   }
+  productDialog.innerHTML =
+    '<button class="icon-btn sheet__close" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></button>' +
+    '<div class="pd">' +
+    '<p class="label">No. ' + String(p.no).padStart(3, '0') + ' · ' + esc(p.brandInfo.name) + '</p>' +
+    '<h2 class="pd__name" id="pd-name">' + esc(p.name) + '</h2>' +
+    (p.image ? '<img class="pd__img" src="' + esc(p.image) + '" alt="' + esc(p.brandInfo.name + ' ' + p.name) + '">' : '') +
+    '<div class="pd__notes">' + p.notes.map((n) => '<span>' + esc(n) + '</span>').join('') + '</div>' +
+    '<div class="specs">' +
+    '<div><span>Family</span><span>' + esc(FAMILIES[p.family] || '') + '</span></div>' +
+    '<div><span>Size</span><span>' + esc(p.size_ml + ' ml · ' + (p.concentration || '')) + '</span></div>' +
+    '<div><span>Wears</span><span>' + esc(WHO[p.for] || WHO.U) + '</span></div>' +
+    '<div><span>Longevity (our estimate)</span><span>' + dots(p.longevity) + '</span></div>' +
+    '</div>' +
+    '<p class="status">' + STATUS_LABEL + '</p>' +
+    priceHTML(p) +
+    '<button class="btn btn--red btn--lg btn--block" type="button" data-waitlist="' + esc(p.id) + '">Join waitlist</button>' +
+    '<p class="fineprint">Not on sale yet. Free to join, no payment is taken. The final price is confirmed at launch.</p>' +
+    '</div>';
+  openDialog(productDialog);
 }
 
-function wireAnchors() {
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a || a.hasAttribute('data-waitlist')) return;
-    const id = a.getAttribute('href').slice(1);
-    const target = id && document.getElementById(id);
-    if (!target) return;
-    e.preventDefault();
-    if (lenis) lenis.scrollTo(target, { offset: -72 });
-    else target.scrollIntoView({ behavior: motionOK ? 'smooth' : 'auto', block: 'start' });
-    history.replaceState(null, '', '#' + id);
-  });
-}
-
-let revealIO = null;
 export function observeReveal(scope = document) {
   const els = scope.querySelectorAll('.reveal:not(.is-in)');
   if (!motionOK || !('IntersectionObserver' in window)) {
     els.forEach((el) => el.classList.add('is-in'));
     return;
   }
-  if (!revealIO) {
-    revealIO = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (!e.isIntersecting) continue;
-          e.target.classList.add('is-in');
-          revealIO.unobserve(e.target);
-        }
-      },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.05 }
-    );
-  }
-  els.forEach((el) => revealIO.observe(el));
-}
-
-function initParallax() {
-  if (!motionOK) return;
-  const layers = [...document.querySelectorAll('[data-parallax]')].map((el) => ({
-    el,
-    speed: parseFloat(el.dataset.parallax) || 0.1,
-    ref: el.closest('[data-parallax-root]') || el.parentElement,
-  }));
-  if (!layers.length) return;
-  let queued = false;
-  const update = () => {
-    queued = false;
-    const vh = innerHeight;
-    for (const layer of layers) {
-      const r = layer.ref.getBoundingClientRect();
-      if (r.bottom < -240 || r.top > vh + 240) continue;
-      const offset = (r.top + r.height / 2 - vh / 2) * layer.speed;
-      layer.el.style.transform = 'translate3d(0,' + offset.toFixed(1) + 'px,0)';
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
     }
-  };
-  const request = () => {
-    if (!queued) {
-      queued = true;
-      requestAnimationFrame(update);
-    }
-  };
-  addEventListener('scroll', request, { passive: true });
-  addEventListener('resize', request);
-  update();
+  }, { rootMargin: '0px 0px -6% 0px' });
+  els.forEach((el) => io.observe(el));
 }
 
-function initHeader() {
-  const header = document.querySelector('.site-header');
-  if (!header) return;
-  const set = () => header.classList.toggle('is-scrolled', scrollY > 8);
-  addEventListener('scroll', set, { passive: true });
-  set();
-}
-
-// ---------------------------------------------------------------------------
-// Waitlist (the form itself loads on first use)
-// ---------------------------------------------------------------------------
 export async function openWaitlist(ids = []) {
   const mod = await import('./waitlist.js');
   return mod.open(ids);
 }
 
-function wireWaitlist() {
-  document.addEventListener('click', (e) => {
-    const trigger = e.target.closest('[data-waitlist]');
-    if (!trigger) return;
-    e.preventDefault();
-    const id = trigger.getAttribute('data-waitlist');
-    openWaitlist(id ? [id] : []);
-  });
-  if (location.hash === '#join') {
-    history.replaceState(null, '', location.pathname + location.search);
-    openWaitlist([]);
+document.addEventListener('click', (e) => {
+  const closer = e.target.closest('[data-close]');
+  if (closer) {
+    const dlg = closer.closest('dialog');
+    if (dlg) dlg.close();
+    return;
   }
-}
+  const join = e.target.closest('[data-waitlist]');
+  if (join) {
+    e.preventDefault();
+    const id = join.getAttribute('data-waitlist');
+    openWaitlist(id ? [id] : []);
+    return;
+  }
+  const opener = e.target.closest('[data-open]');
+  if (opener) {
+    openProduct(opener.getAttribute('data-open'));
+    return;
+  }
+  if (e.target instanceof HTMLDialogElement && e.target.open) {
+    const r = e.target.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) e.target.close();
+  }
+});
 
-wireDialogs();
-wireAnchors();
-wireWaitlist();
-initHeader();
-initParallax();
+if (location.hash === '#join') {
+  history.replaceState(null, '', location.pathname + location.search);
+  openWaitlist([]);
+}
 observeReveal();
-whenIdle(initSmoothScroll);
