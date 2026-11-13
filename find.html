@@ -69,6 +69,13 @@
           <legend>Style</legend>
           <div class="chips chips--wrap" id="q-who"></div>
         </fieldset>
+        <div class="q q--wide">
+          <span class="q__no">07</span>
+          <label for="q-like">A perfume you already love</label>
+          <small>Optional. Start typing and pick one. We'll look for others with a similar profile.</small>
+          <input class="input" id="q-like" list="q-like-list" placeholder="e.g. Dior Sauvage" autocomplete="off">
+          <datalist id="q-like-list"></datalist>
+        </div>
         <div class="finder__go hero__cta">
           <button class="btn btn--red btn--lg" type="submit">Show my shortlist</button>
           <button class="btn btn--line btn--lg" type="button" id="finder-reset">Start again</button>

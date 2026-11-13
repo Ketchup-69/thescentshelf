@@ -1,6 +1,7 @@
 // Scent Finder: scores every perfume against what the visitor typed and picked.
 // Everything runs in the browser. Nothing typed here is sent anywhere.
 import { loadCatalog, cardHTML, esc, FAMILIES } from './app.js';
+import { profile, closeness, ACCORDS } from './profile.js';
 
 const NOTE_CHIPS = ['vanilla', 'oud', 'rose', 'citrus', 'tobacco', 'leather', 'musk', 'amber', 'coffee', 'coconut', 'sandalwood', 'jasmine', 'lavender', 'apple', 'pineapple', 'sea notes', 'spice', 'honey'];
 
@@ -62,15 +63,22 @@ function suggest() {
   if (!who && tokens.some((t) => WOMEN_WORDS.includes(t))) who = 'W';
   const wantsLong = tokens.some((t) => LONG_WORDS.includes(t));
   const wantsCheap = tokens.some((t) => CHEAP_WORDS.includes(t));
-  const asked = tokens.length || fams.length || notes.length || who || minLong || budget;
+  const likeText = document.getElementById('q-like').value.trim().toLowerCase();
+  const liked = likeText ? catalog.products.find((p) => (p.brandInfo.name + ' ' + p.name).toLowerCase() === likeText) || catalog.products.find((p) => (p.brandInfo.name + ' ' + p.name).toLowerCase().includes(likeText)) : null;
+  const asked = tokens.length || fams.length || notes.length || who || minLong || budget || liked;
 
   const scored = [];
   for (const p of catalog.products) {
     if (who && p.for !== who && p.for !== 'U') continue;
     if (minLong && p.longevity < minLong) continue;
     if (budget && (!p.planned_price_inr || p.planned_price_inr > budget)) continue;
+    if (liked && p.id === liked.id) continue;
     let score = 0;
     const why = [];
+    if (liked) {
+      const c = closeness(liked, p);
+      if (c >= 5) { score += c * 1.3; why.push('like ' + liked.name); }
+    }
     const noteText = p.notes.join(' ').toLowerCase();
     const nameText = (p.brandInfo.name + ' ' + p.name).toLowerCase();
     if (fams.includes(p.family)) { score += 5; why.push(FAMILIES[p.family].toLowerCase()); }
@@ -89,7 +97,7 @@ function suggest() {
     });
     if (wantsLong) score += (p.longevity - 3) * 1.5;
     if (wantsCheap && p.planned_price_inr) score += p.planned_price_inr <= 3500 ? 3 : p.planned_price_inr <= 6000 ? 1 : -2;
-    if (score <= 0 && (tokens.length || fams.length || notes.length)) continue;
+    if (score <= 0 && (tokens.length || fams.length || notes.length || liked)) continue;
     score += p.longevity * 0.15;
     scored.push({ p, score, why });
   }
@@ -112,10 +120,12 @@ function suggest() {
   } else {
     out.innerHTML =
       '<div class="results__head"><p class="label">Your shortlist</p><h2>' + top.length + ' to <span class="it red">try first.</span></h2>' +
-      '<p class="fineprint">Suggestions are matched from each perfume\'s listed notes and our own longevity estimates. Skin and weather change how a scent wears.</p></div>' +
+      '<p class="fineprint">The percentage shows how close each one is to your best match. Suggestions come from each perfume\'s listed notes and our own longevity estimates. Skin and weather change how a scent wears.</p></div>' +
       '<div class="grid">' + top.map((s, i) => {
         const why = s.why.length ? '<p class="why">Matches: ' + esc([...new Set(s.why)].slice(0, 4).join(', ')) + '</p>' : '';
-        return cardHTML(s.p, '<span class="rank">' + (i + 1) + '</span>' + why);
+        const pct = Math.max(55, Math.round((s.score / top[0].score) * 100));
+        const mini = '<div class="bars bars--mini">' + profile(s.p).accords.slice(0, 3).map((a) => '<div class="bar"><span class="bar__label">' + esc(a.name) + '</span><span class="bar__track"><span class="bar__fill" style="width:' + a.pct + '%;background:' + (ACCORDS[a.name] || 'var(--ink)') + '"></span></span></div>').join('') + '</div>';
+        return cardHTML(s.p, '<span class="rank">' + pct + '%</span>' + why + mini);
       }).join('') + '</div>';
   }
   out.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -133,6 +143,7 @@ async function init() {
     out.innerHTML = '<p class="notice">The shelf could not be loaded. Please refresh the page.</p>';
     return;
   }
+  document.getElementById('q-like-list').innerHTML = catalog.products.map((p) => '<option value="' + esc(p.brandInfo.name + ' ' + p.name) + '">').join('');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     suggest();

@@ -14,7 +14,9 @@ It is a plain static site: HTML, CSS and JavaScript files, with no build step. W
 | `privacy.html`, `terms.html`, `refunds.html`, `shipping.html`, `contact.html` | Legal pages (placeholders marked `[TO CONFIRM]`) |
 | `data/products.json` | Brands and products. Edit this to add or change products |
 | `js/config.js` | Waitlist link, deposit switch, Razorpay link |
+| `perfume.html` | One page per perfume (`perfume.html?id=product-id`): accords, notes, performance, when to wear, similar perfumes |
 | `js/find.js` | The Scent Finder's matching rules |
+| `js/profile.js` | How accords, projection, seasons and similar perfumes are worked out from the data |
 | `apps-script/Code.gs` | The script that saves waitlist signups into your Google Sheet |
 | `serve.ps1` | Runs the site on your own computer |
 ## Run it on your computer
@@ -129,4 +131,4 @@ Not active yet. When `thescentshelf.in` is ready:
 
 - No JavaScript libraries. Typefaces load from Google Fonts.
 - The Scent Finder runs entirely in the visitor's browser. Nothing typed into it is sent anywhere.
-- The header and footer are repeated in each HTML file. If you change a footer link, change it in all eight pages.
+- The header and footer are repeated in each HTML file. If you change a footer link, change it in all nine pages.

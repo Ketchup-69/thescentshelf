@@ -61,15 +61,16 @@ export function sizeLine(p) {
 
 // One product card. `extra` is optional HTML shown above the brand (used by the finder).
 export function cardHTML(p, extra = '') {
+  const href = './perfume.html?id=' + encodeURIComponent(p.id);
   const img = p.image
-    ? '<button class="card__img" type="button" data-open="' + esc(p.id) + '" tabindex="-1" aria-hidden="true"><img src="' + esc(p.image) + '" alt="" loading="lazy"></button>'
+    ? '<a class="card__img" href="' + href + '" tabindex="-1" aria-hidden="true"><img src="' + esc(p.image) + '" alt="" loading="lazy"></a>'
     : '';
   return (
     '<article class="card">' + img +
     '<div class="card__top"><span>No. ' + String(p.no).padStart(3, '0') + '</span><b>' + esc(FAMILIES[p.family] || '') + '</b></div>' +
     extra +
     '<p class="card__brand">' + esc(p.brandInfo.name) + '</p>' +
-    '<h3 class="card__name"><button type="button" data-open="' + esc(p.id) + '">' + esc(p.name) + '</button></h3>' +
+    '<h3 class="card__name"><a href="' + href + '">' + esc(p.name) + '</a></h3>' +
     '<p class="card__notes">' + esc(p.notes.join(' · ')) + '</p>' +
     '<div class="specs"><div><span>' + esc(sizeLine(p)) + '</span><span>Lasts ' + dots(p.longevity) + '</span></div></div>' +
     '<p class="status">' + STATUS_LABEL + '</p>' +
@@ -91,38 +92,6 @@ export function openDialog(dialog) {
     locks = Math.max(0, locks - 1);
     if (locks === 0) root.classList.remove('is-locked');
   }, { once: true });
-}
-
-let productDialog;
-export async function openProduct(id) {
-  const catalog = await loadCatalog();
-  const p = catalog.byId.get(id);
-  if (!p) return;
-  if (!productDialog) {
-    productDialog = document.createElement('dialog');
-    productDialog.className = 'sheet';
-    productDialog.setAttribute('aria-labelledby', 'pd-name');
-    document.body.appendChild(productDialog);
-  }
-  productDialog.innerHTML =
-    '<button class="icon-btn sheet__close" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></button>' +
-    '<div class="pd">' +
-    '<p class="label">No. ' + String(p.no).padStart(3, '0') + ' · ' + esc(p.brandInfo.name) + '</p>' +
-    '<h2 class="pd__name" id="pd-name">' + esc(p.name) + '</h2>' +
-    (p.image ? '<img class="pd__img" src="' + esc(p.image) + '" alt="' + esc(p.brandInfo.name + ' ' + p.name) + '">' : '') +
-    '<div class="pd__notes">' + p.notes.map((n) => '<span>' + esc(n) + '</span>').join('') + '</div>' +
-    '<div class="specs">' +
-    '<div><span>Family</span><span>' + esc(FAMILIES[p.family] || '') + '</span></div>' +
-    '<div><span>Size</span><span>' + esc(p.size_ml + ' ml · ' + (p.concentration || '')) + '</span></div>' +
-    '<div><span>Wears</span><span>' + esc(WHO[p.for] || WHO.U) + '</span></div>' +
-    '<div><span>Longevity (our estimate)</span><span>' + dots(p.longevity) + '</span></div>' +
-    '</div>' +
-    '<p class="status">' + STATUS_LABEL + '</p>' +
-    priceHTML(p) +
-    '<button class="btn btn--red btn--lg btn--block" type="button" data-waitlist="' + esc(p.id) + '">Join waitlist</button>' +
-    '<p class="fineprint">Not on sale yet. Free to join, no payment is taken. The final price is confirmed at launch.</p>' +
-    '</div>';
-  openDialog(productDialog);
 }
 
 export function observeReveal(scope = document) {
@@ -158,11 +127,6 @@ document.addEventListener('click', (e) => {
     e.preventDefault();
     const id = join.getAttribute('data-waitlist');
     openWaitlist(id ? [id] : []);
-    return;
-  }
-  const opener = e.target.closest('[data-open]');
-  if (opener) {
-    openProduct(opener.getAttribute('data-open'));
     return;
   }
   if (e.target instanceof HTMLDialogElement && e.target.open) {

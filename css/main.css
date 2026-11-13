@@ -266,4 +266,57 @@ input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--red); fl
   .wl, .pd { padding: 34px 34px 32px; }
 }
 @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+/* Card name is now a link */
+.card__name a { text-decoration: none; }
+.card__name a:hover { color: var(--red); font-style: italic; }
+.card__img { display: block; }
+
+/* Bars */
+.bars { display: grid; gap: 8px; }
+.bar { display: grid; grid-template-columns: 104px 1fr; align-items: center; gap: 10px; }
+.bar__label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.bar__track { display: block; height: 22px; background: var(--paper); border: 1.5px solid var(--ink); }
+.bar__fill { display: block; height: 100%; border-right: 1.5px solid var(--ink); }
+.bars--mini { gap: 4px; margin: 2px 0 4px; }
+.bars--mini .bar { grid-template-columns: 78px 1fr; gap: 6px; }
+.bars--mini .bar__label { font-size: 0.6rem; }
+.bars--mini .bar__track { height: 9px; border-width: 1px; }
+.bars--mini .bar__fill { border-right-width: 1px; }
+
+/* Perfume page */
+.crumbs { padding: 16px 0 12px; border-bottom: 1px solid var(--rule); }
+.crumbs a { text-decoration: none; }
+.crumbs a:hover { color: var(--red); }
+.pf-head { display: grid; gap: 20px; padding: 22px 0 26px; border-bottom: 2px solid var(--rule); }
+.pf-brand { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.4rem, 5vw, 2rem); line-height: 1; color: var(--red); }
+.pf-name { font-family: var(--serif); font-weight: 400; text-transform: none; font-size: clamp(3.2rem, 15vw, 8rem); line-height: 0.9; letter-spacing: -0.02em; margin: 6px 0 12px; overflow-wrap: anywhere; }
+.pf-sum { font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+.pf-img { margin-top: 18px; max-height: 420px; border: 2px solid var(--ink); background: var(--card); }
+.pf-buy { display: grid; gap: 8px; padding: 16px; border: 2px solid var(--ink); background: var(--card); align-content: start; }
+.pf-buy .price strong { font-size: 2.8rem; }
+.pf-buy .price strong.tba { font-size: 1.5rem; }
+.panels { display: grid; border-left: 2px solid var(--rule); margin-top: 26px; border-top: 2px solid var(--rule); }
+.panel { padding: 18px 16px 22px; border-right: 2px solid var(--rule); border-bottom: 2px solid var(--rule); background: var(--card); display: grid; gap: 12px; align-content: start; }
+.panel__title { font-size: clamp(1.8rem, 6vw, 2.4rem); }
+.pyramid { display: grid; gap: 6px; justify-items: center; }
+.pyramid__tier { display: grid; gap: 2px; text-align: center; padding: 12px 10px; border: 1.5px solid var(--ink); width: 100%; }
+.pyramid__tier--1 { width: 56%; background: var(--paper); }
+.pyramid__tier--2 { width: 78%; background: #F3D9D6; }
+.pyramid__tier--3 { background: var(--red); color: #fff; border-color: var(--red); }
+.pyramid__when { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.pyramid__tier strong { font-family: var(--serif); font-weight: 400; font-size: 1.6rem; line-height: 1.05; text-transform: capitalize; }
+.pyramid__tier small { font-size: 0.74rem; opacity: 0.8; }
+.meter { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--ink-3); font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.meter .dots { font-size: 1.3rem; }
+.verdict { font-family: var(--serif); font-size: 1.35rem; line-height: 1.2; }
+.verdict strong { font-weight: 400; font-style: italic; color: var(--red); }
+.row { padding: 48px 0 0; display: grid; gap: 10px; }
+.row__note { color: var(--ink-2); max-width: 40em; }
+.row .grid { margin-top: 12px; }
+.pf-foot { padding: 30px 0 50px; max-width: 50em; }
+@media (min-width: 900px) {
+  .pf-head { grid-template-columns: 1fr 340px; align-items: end; gap: 40px; }
+  .panels { grid-template-columns: 1fr 1fr; }
+  .panel { padding: 24px 24px 28px; }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
