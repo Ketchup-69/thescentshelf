@@ -5,7 +5,7 @@
 // Paste the Google Apps Script web app URL here (it ends in /exec).
 // While this is empty, the live site tells visitors the waitlist is not open yet
 // and saves nothing.
-export const WAITLIST_ENDPOINT = '';
+export const WAITLIST_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEpu1hzIgxYl9XZQ3qqhVnqSAXemAHthQggbzrXSU7761gM_Ey8JgMAx9LJLrJQTX1/exec';
 
 // 2) PRIORITY DEPOSIT (keep OFF until the business is registered and Razorpay KYC is approved)
 export const PRIORITY_DEPOSIT_ENABLED = false;
