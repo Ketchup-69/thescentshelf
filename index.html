@@ -3,144 +3,168 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>The Scent Shelf · 560 perfumes, 28 houses, coming soon to India</title>
-  <meta name="description" content="The Scent Shelf is a pre-launch perfume store for India. Browse 560 perfumes from 28 houses, get matched by the Scent Finder, and join the waitlist. Nothing to pay.">
+  <title>The Scent Shelf · Smell rich without going broke</title>
+  <meta name="description" content="Arabic perfumes that smell like the big designer names, for a fraction of the price. Coming soon to India: reserve now, pay at launch.">
+  <meta property="og:title" content="The Scent Shelf · Smell rich without going broke">
+  <meta property="og:description" content="Arabic perfumes that smell like the big designer names, for a fraction of the price. Coming soon to India: reserve now, pay at launch.">
   <meta name="theme-color" content="#FAF8F3">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="The Scent Shelf · coming soon to India">
-  <meta property="og:description" content="560 perfumes. 28 houses. 0 in stock, yet. Join the waitlist.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
   <link rel="stylesheet" href="./css/main.css">
   <link rel="preload" href="./data/products.json" as="fetch" crossorigin="anonymous">
-  <link rel="modulepreload" href="./js/app.js">
-</head>
+  <link rel="modulepreload" href="./js/app.js"></head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap site-header__in">
-      <a class="logo" href="./index.html" aria-label="The Scent Shelf, home"><i></i>Scent Shelf</a>
+      <a class="logo" href="./index.html" aria-current="page" aria-label="The Scent Shelf, home"><i></i>Scent Shelf</a>
       <nav class="site-nav" aria-label="Main">
         <a href="./shop.html">Shop</a>
-        <a href="./find.html">Finder</a>
-        <a class="btn btn--red" href="./index.html#join" data-waitlist>Waitlist</a>
+        <a class="nav-lux" href="./lux.html">Lux</a>
+        <a class="nav-finder" href="./find.html">Finder</a>
+        <a class="nav-icon" href="./account.html" aria-label="My shelf: orders, saved and preferences"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></a>
+        <a class="nav-icon" href="./bag.html" aria-label="Bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="badge" data-bag-count hidden>0</span></a>
       </nav>
     </div>
   </header>
-
   <main id="main">
     <section class="hero">
       <div class="wrap">
-        <div class="hero__kicker">
-          <span class="label">Pre-launch · India</span>
-          <span class="label">Est. 2026</span>
-        </div>
+        <div class="hero__kicker"><span class="label">Pre-launch · India</span><span class="label">Est. 2026</span></div>
         <svg class="stamp" viewBox="0 0 200 200" aria-hidden="true">
           <defs><path id="ring" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
           <circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" stroke-width="2"/>
           <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor" stroke-width="1"/>
-          <text><textPath href="#ring">Coming soon · Join the waitlist · Coming soon · Join the waitlist · </textPath></text>
+          <text><textPath href="#ring">Smell rich · Stay rich · Smell rich · Stay rich · Smell rich · </textPath></text>
           <circle cx="100" cy="100" r="9" fill="currentColor"/>
         </svg>
-        <h1 class="mega">
-          <span>Find your</span>
-          <span class="it">next signature</span>
-          <span>scent.</span>
-        </h1>
+        <h1 class="mega"><span>Smell rich.</span><span class="it">without going</span><span>broke.</span></h1>
         <div class="hero__row">
-          <p class="lede">A new perfume shelf for India. Arabic houses, designer names and niche legends, all in one place. We open soon.</p>
+          <p class="lede">The perfumes everyone's talking about, and the ones that smell like bottles costing ten times more. Treating yourself shouldn't burn a hole in your pocket.</p>
           <div class="hero__cta">
-            <button class="btn btn--red btn--lg" type="button" data-waitlist>Join the waitlist</button>
+            <a class="btn btn--red btn--lg" href="./shop.html">Shop the shelf</a>
             <a class="btn btn--line btn--lg" href="./find.html">Find my scent</a>
           </div>
         </div>
       </div>
       <div class="wrap">
         <div class="tally">
-          <div><strong data-count="products">560</strong><span>Perfumes</span></div>
-          <div><strong data-count="brands">28</strong><span>Houses</span></div>
-          <div><strong>0</strong><span>In stock. Yet.</span></div>
+          <div><strong data-count="shelf">168</strong><span>Perfumes</span></div>
+          <div><strong data-count="shelf-brands">13</strong><span>Houses</span></div>
+          <div><strong data-count="from">₹1,349</strong><span>Starting price</span></div>
         </div>
       </div>
     </section>
 
-    <div class="marquee" aria-hidden="true"><div class="marquee__track" id="marquee"></div></div>
+    <div class="marquee stars" aria-hidden="true"><div class="marquee__track" id="marquee"></div></div>
+
+    <section class="section" id="swap">
+      <div class="wrap">
+        <header class="section__head reveal">
+          <p class="label">The swap</p>
+          <h2>Same smell. <span class="it red">Smaller bill.</span></h2>
+          <p class="lede">Perfumes widely compared to designer bottles, side by side: price and how long they last.</p>
+        </header>
+        <div class="swaps" id="swaps"></div>
+        <p style="margin-top:22px"><a class="btn btn--line btn--lg" href="./shop.html?filter=twins">See every designer twin</a></p>
+      </div>
+    </section>
+
+    <section class="section section--red offer-band">
+      <div class="wrap cta-band">
+        <p class="label">The offer</p>
+        <h2 class="mega">Buy 5. <span class="it">The 6th is on us.</span></h2>
+        <p class="lede">Put six bottles in your bag and the cheapest one is free. Delivery on that order is free too.</p>
+        <a class="btn btn--lg" href="./shop.html">Start your six</a>
+      </div>
+    </section>
 
     <section class="section" id="houses">
       <div class="wrap">
         <header class="section__head reveal">
           <p class="label">The index</p>
-          <h2>Three shelves. <span class="it red">Pick a house.</span></h2>
+          <h2>Pick <span class="it red">a house.</span></h2>
         </header>
         <div id="shelves"></div>
       </div>
     </section>
 
-    <section class="section section--red">
+    <section class="section section--ink stars">
       <div class="wrap cta-band">
         <p class="label">Scent Finder</p>
-        <h2>Don't know what <span class="it">you want?</span></h2>
-        <p class="lede">Tell us the mood, the notes, how long it should last and what you'd spend. We'll pull a shortlist off the shelf.</p>
-        <a class="btn btn--lg" href="./find.html">Find my scent</a>
+        <h2>Don't know what <span class="it red">you want?</span></h2>
+        <p class="lede">Describe the mood, pick your notes, how long it should last and what you'd spend, or name a designer perfume you love. We'll pull a shortlist off the shelf.</p>
+        <a class="btn btn--red btn--lg" href="./find.html">Find my scent</a>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap">
         <header class="section__head reveal">
-          <p class="label">How the waitlist works</p>
-          <h2>Three steps. <span class="it red">No payment.</span></h2>
+          <p class="label">How it works</p>
+          <h2>Reserve now. <span class="it red">Pay at launch.</span></h2>
         </header>
         <ol class="steps">
-          <li class="step reveal"><span class="step__no">1</span><h3>Pick your bottles</h3><p>Browse the shelf, or let the Finder choose. Tick the ones you would actually buy.</p></li>
-          <li class="step reveal"><span class="step__no">2</span><h3>Join the list</h3><p>Name, a phone number or email, and your city. That is all we ask for.</p></li>
-          <li class="step reveal"><span class="step__no">3</span><h3>Hear first</h3><p>When we open, the waitlist gets the message before anyone else.</p></li>
+          <li class="step reveal"><span class="step__no">1</span><h3>Fill your bag</h3><p>Browse the shelf or let the Finder choose. Six bottles and one is free.</p></li>
+          <li class="step reveal"><span class="step__no">2</span><h3>Reserve it</h3><p>Name, phone or email, and city. Nothing is charged today.</p></li>
+          <li class="step reveal"><span class="step__no">3</span><h3>Hear first</h3><p>When we open, we confirm your order and you pay then. Reservations go first.</p></li>
         </ol>
       </div>
     </section>
 
-    <section class="section section--ink">
+    <section class="section lux-band stars">
+      <div class="wrap cta-band">
+        <p class="label">Lux</p>
+        <h2>Want the <span class="it">real thing?</span></h2>
+        <p class="lede"><span data-count="lux">460</span> designer and niche perfumes from <span data-count="lux-brands">23</span> houses. Kept on their own shelf, so the rest of the site stays easy on your wallet.</p>
+        <a class="btn btn--lg" href="./lux.html">Enter Lux</a>
+      </div>
+    </section>
+
+    <section class="section section--ink stars">
       <div class="wrap">
         <header class="section__head reveal">
           <p class="label">House rules</p>
           <h2>No games. <span class="it red">Just perfume.</span></h2>
         </header>
         <ul class="rules">
-          <li class="reveal"><strong>Nothing is in stock yet.</strong><span>So every bottle says "Coming soon". No fake "only 2 left".</span></li>
-          <li class="reveal"><strong>No countdown clocks.</strong><span>Take your time. The shelf will still be here.</span></li>
-          <li class="reveal"><strong>Prices shown upfront.</strong><span>Planned launch prices where we have them, confirmed when we open.</span></li>
-          <li class="reveal"><strong>Your details stay yours.</strong><span>Used for the waitlist only. Never sold. Deleted when you ask.</span></li>
+          <li class="reveal"><strong>Nothing is in stock yet.</strong><span>So every bottle says "Coming soon". No fake "only 2 left", no countdown clocks.</span></li>
+          <li class="reveal"><strong>Prices shown upfront.</strong><span>In rupees and dollars, side by side. Confirmed when we open.</span></li>
+          <li class="reveal"><strong>Honest comparisons.</strong><span>"Smells like" means what people compare it to. It is a different perfume, and we say so.</span></li>
+          <li class="reveal"><strong>Your details stay yours.</strong><span>Used for your reservation only. Never sold. Deleted when you ask.</span></li>
         </ul>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap cta-band">
-        <h2 class="mega" style="font-size:clamp(3.4rem,17vw,11rem)">Be first <span class="it red">in line.</span></h2>
-        <button class="btn btn--red btn--lg" type="button" data-waitlist>Join the waitlist</button>
+        <h2 class="mega" style="font-size:clamp(3.4rem,17vw,11rem)">Smell good. <span class="it red">Spend less.</span></h2>
+        <a class="btn btn--red btn--lg" href="./shop.html">Shop the shelf</a>
       </div>
     </section>
   </main>
-
   <footer class="site-footer">
     <div class="wrap">
       <a class="logo" href="./index.html"><i></i>Scent Shelf</a>
+      <p class="lede">Smelling good shouldn't burn a hole in your pocket.</p>
       <nav class="site-footer__links" aria-label="Footer">
         <a href="./shop.html">Shop</a>
+        <a href="./lux.html">Lux</a>
         <a href="./find.html">Scent Finder</a>
+        <a href="./bag.html">Bag</a>
+        <a href="./account.html">My shelf</a>
         <a href="./privacy.html">Privacy</a>
         <a href="./terms.html">Terms</a>
-        <a href="./refunds.html">Refund and Cancellation</a>
+        <a href="./refunds.html">Refunds</a>
         <a href="./shipping.html">Shipping</a>
         <a href="./contact.html">Contact</a>
       </nav>
-      <p class="disclaimer">The Scent Shelf is an independent retailer and is not affiliated with or endorsed by the brands listed. Brand names are used only to identify genuine products.</p>
-      <p class="fineprint">© 2026 The Scent Shelf. Pre-launch: nothing is on sale yet. Prices shown are planned launch prices and may change before launch.</p>
+      <p class="disclaimer">The Scent Shelf is an independent retailer and is not affiliated with or endorsed by the brands listed. Brand names are used only to identify genuine products. "Smells like" comparisons describe how a perfume is commonly compared; the products are different and made by different houses.</p>
+      <p class="fineprint">© 2026 The Scent Shelf. Pre-launch: nothing is on sale yet and nothing is charged. Prices are planned launch prices and may change. USD is shown for reference.</p>
     </div>
   </footer>
-
   <script type="module" src="./js/home.js"></script>
 </body>
 </html>

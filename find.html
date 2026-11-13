@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Scent Finder · The Scent Shelf</title>
-  <meta name="description" content="Describe the perfume you want, pick notes, longevity and budget, and get a shortlist from The Scent Shelf.">
+  <meta name="description" content="Describe what you want, or name a designer perfume you love, and get a shortlist of perfumes that fit, for less.">
+  <meta property="og:title" content="Scent Finder · The Scent Shelf">
+  <meta property="og:description" content="Describe what you want, or name a designer perfume you love, and get a shortlist of perfumes that fit, for less.">
   <meta name="theme-color" content="#FAF8F3">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,8 +14,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
   <link rel="stylesheet" href="./css/main.css">
   <link rel="preload" href="./data/products.json" as="fetch" crossorigin="anonymous">
-  <link rel="modulepreload" href="./js/app.js">
-</head>
+  <link rel="modulepreload" href="./js/app.js"></head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
@@ -21,12 +22,13 @@
       <a class="logo" href="./index.html" aria-label="The Scent Shelf, home"><i></i>Scent Shelf</a>
       <nav class="site-nav" aria-label="Main">
         <a href="./shop.html">Shop</a>
-        <a href="./find.html" aria-current="page">Finder</a>
-        <a class="btn btn--red" href="./index.html#join" data-waitlist>Waitlist</a>
+        <a class="nav-lux" href="./lux.html">Lux</a>
+        <a class="nav-finder" href="./find.html" aria-current="page">Finder</a>
+        <a class="nav-icon" href="./account.html" aria-label="My shelf: orders, saved and preferences"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></a>
+        <a class="nav-icon" href="./bag.html" aria-label="Bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="badge" data-bag-count hidden>0</span></a>
       </nav>
     </div>
   </header>
-
   <main id="main">
     <div class="wrap">
       <header class="page-head">
@@ -35,47 +37,30 @@
         <p>Answer as much or as little as you like. Everything stays on your device; nothing you type here is sent to us.</p>
       </header>
       <form class="finder" id="finder" novalidate>
+        <fieldset class="q q--wide">
+          <span class="q__no">00</span>
+          <legend>Where should we look?</legend>
+          <small>The shelf is the affordable side. Lux is designer and niche.</small>
+          <div class="chips chips--wrap" id="q-tier"></div>
+        </fieldset>
         <div class="q q--wide">
           <span class="q__no">01</span>
+          <label for="q-like">A perfume you already love</label>
+          <small>Optional. Name a designer bottle and we'll find what smells like it for less.</small>
+          <input class="input" id="q-like" list="q-like-list" placeholder="e.g. Creed Aventus" autocomplete="off">
+          <datalist id="q-like-list"></datalist>
+        </div>
+        <div class="q q--wide">
+          <span class="q__no">02</span>
           <label for="q-text">Describe what you want</label>
           <small>In your own words. For example: "fresh for office in summer, lasts long" or "sweet vanilla for date night".</small>
           <textarea class="textarea" id="q-text" maxlength="300" placeholder="Something warm and sweet for winter evenings..."></textarea>
         </div>
-        <fieldset class="q">
-          <span class="q__no">02</span>
-          <legend>Scent families</legend>
-          <small>Pick any that sound right.</small>
-          <div class="chips chips--wrap" id="q-family"></div>
-        </fieldset>
-        <fieldset class="q">
-          <span class="q__no">03</span>
-          <legend>Notes you love</legend>
-          <small>Pick any.</small>
-          <div class="chips chips--wrap" id="q-notes"></div>
-        </fieldset>
-        <fieldset class="q">
-          <span class="q__no">04</span>
-          <legend>How long should it last?</legend>
-          <div class="chips chips--wrap" id="q-long"></div>
-        </fieldset>
-        <fieldset class="q">
-          <span class="q__no">05</span>
-          <legend>Budget</legend>
-          <small>Choosing a budget hides perfumes whose price is not announced yet.</small>
-          <div class="chips chips--wrap" id="q-budget"></div>
-        </fieldset>
-        <fieldset class="q q--wide">
-          <span class="q__no">06</span>
-          <legend>Style</legend>
-          <div class="chips chips--wrap" id="q-who"></div>
-        </fieldset>
-        <div class="q q--wide">
-          <span class="q__no">07</span>
-          <label for="q-like">A perfume you already love</label>
-          <small>Optional. Start typing and pick one. We'll look for others with a similar profile.</small>
-          <input class="input" id="q-like" list="q-like-list" placeholder="e.g. Dior Sauvage" autocomplete="off">
-          <datalist id="q-like-list"></datalist>
-        </div>
+        <fieldset class="q"><span class="q__no">03</span><legend>Scent families</legend><small>Pick any that sound right.</small><div class="chips chips--wrap" id="q-family"></div></fieldset>
+        <fieldset class="q"><span class="q__no">04</span><legend>Notes you love</legend><small>Pick any.</small><div class="chips chips--wrap" id="q-notes"></div></fieldset>
+        <fieldset class="q"><span class="q__no">05</span><legend>How long should it last?</legend><div class="chips chips--wrap" id="q-long"></div></fieldset>
+        <fieldset class="q"><span class="q__no">06</span><legend>Budget</legend><small>Choosing a budget hides perfumes whose price is not announced yet.</small><div class="chips chips--wrap" id="q-budget"></div></fieldset>
+        <fieldset class="q q--wide"><span class="q__no">07</span><legend>Style</legend><div class="chips chips--wrap" id="q-who"></div></fieldset>
         <div class="finder__go hero__cta">
           <button class="btn btn--red btn--lg" type="submit">Show my shortlist</button>
           <button class="btn btn--line btn--lg" type="button" id="finder-reset">Start again</button>
@@ -84,24 +69,26 @@
       <div id="results" aria-live="polite"></div>
     </div>
   </main>
-
   <footer class="site-footer">
     <div class="wrap">
       <a class="logo" href="./index.html"><i></i>Scent Shelf</a>
+      <p class="lede">Smelling good shouldn't burn a hole in your pocket.</p>
       <nav class="site-footer__links" aria-label="Footer">
         <a href="./shop.html">Shop</a>
+        <a href="./lux.html">Lux</a>
         <a href="./find.html">Scent Finder</a>
+        <a href="./bag.html">Bag</a>
+        <a href="./account.html">My shelf</a>
         <a href="./privacy.html">Privacy</a>
         <a href="./terms.html">Terms</a>
-        <a href="./refunds.html">Refund and Cancellation</a>
+        <a href="./refunds.html">Refunds</a>
         <a href="./shipping.html">Shipping</a>
         <a href="./contact.html">Contact</a>
       </nav>
-      <p class="disclaimer">The Scent Shelf is an independent retailer and is not affiliated with or endorsed by the brands listed. Brand names are used only to identify genuine products.</p>
-      <p class="fineprint">© 2026 The Scent Shelf. Pre-launch: nothing is on sale yet. Prices shown are planned launch prices and may change before launch.</p>
+      <p class="disclaimer">The Scent Shelf is an independent retailer and is not affiliated with or endorsed by the brands listed. Brand names are used only to identify genuine products. "Smells like" comparisons describe how a perfume is commonly compared; the products are different and made by different houses.</p>
+      <p class="fineprint">© 2026 The Scent Shelf. Pre-launch: nothing is on sale yet and nothing is charged. Prices are planned launch prices and may change. USD is shown for reference.</p>
     </div>
   </footer>
-
   <script type="module" src="./js/find.js"></script>
 </body>
 </html>

@@ -9,7 +9,11 @@ It is a plain static site: HTML, CSS and JavaScript files, with no build step. W
 | File | What it is |
 | --- | --- |
 | `index.html` | Home page |
-| `shop.html` | The full catalogue with search, house, scent family and sort |
+| `shop.html` | The shelf: affordable Arabic houses, with search, filters and a "smells like a designer" filter |
+| `lux.html` | Lux: designer and niche houses, black and red theme |
+| `bag.html` | Bag and checkout preview (buy 5 get 1, founder hand-delivery). Nothing is charged |
+| `account.html` | My shelf: order history, saved list, preferences, free-bottle stamps (stored on the visitor's device) |
+| `js/store.js` | Where the bag, saved list, preferences and orders are kept in the browser |
 | `find.html` | Scent Finder: describe what you want and get a shortlist |
 | `privacy.html`, `terms.html`, `refunds.html`, `shipping.html`, `contact.html` | Legal pages (placeholders marked `[TO CONFIRM]`) |
 | `data/products.json` | Brands and products. Edit this to add or change products |
@@ -96,6 +100,19 @@ Cards are text-only until a product has a photo. To add one, put the image in an
 ### Where the catalogue came from
 
 Names, sizes and prices were collected on 13 November 2026 from public listings on Indian perfume retailers. Planned launch prices are the lowest listed price minus ₹350. Chanel, Diptyque, Bond No. 9 and a few others had no usable rupee price, so they show "Announced at launch". Scent family, notes and longevity were written from general knowledge and are estimates. All of it should be checked against your supplier's list before launch.
+## Shelf, Lux, bag and accounts
+
+- **Shelf vs Lux.** Brands with `"group": "Arabic"` in `data/products.json` appear on the shelf (`shop.html`). Every other group appears on Lux (`lux.html`).
+- **Smells like.** Add `"smells_like": "<lux product id>"` to a shelf perfume to link it to the designer perfume it is compared to. Its page then shows a side-by-side table (price, longevity, projection, notes), the home page can feature it in "The swap", and the designer's page lists it under "Want it for less?". Longevity and projection are our estimates, and the pages say so.
+- **Prices in two currencies.** `USD_INR_RATE` in `js/config.js` sets the dollar figure shown next to every rupee price.
+- **Bag and checkout are a preview.** No money is taken. "Reserve my order" sends the bag to the same Google Sheet as the waitlist (the `Page` column reads like `checkout | 6 bottles | FOUNDER DELIVERY | est ₹...`) and saves the order on the visitor's device.
+- **Buy 5, get 1 free.** In the bag, every sixth bottle is free (the cheapest) and delivery on that order is free. Change `BUY_X_GET_ONE` to adjust.
+- **Founder hand-delivery** costs `FOUNDER_DELIVERY_USD` (4000). It is optional and never pre-selected.
+- **Delivery fee** is `DELIVERY_FEE_INR` (149, a placeholder: set your real fee).
+- **Accounts are per device.** Orders, saved perfumes and preferences live in the visitor's browser, so you cannot see them. You do see reservations in the sheet. Real logins need a backend and a payment provider, which come after the business is registered.
+- **Refunds.** All sales are final except damaged, wrong or non-genuine items (required under Indian consumer rules, and needed for Razorpay approval). Fill in the `[TO CONFIRM]` claim window and timelines on `refunds.html`.
+
+Extra Arabic houses (Armaf, Maison Alhambra, Al Haramain, Khadlaj, Zimaya, Paris Corner, Swiss Arabian, Arabiyat) were added on 13 November 2026 from public listings on Indian retailers, with the same pricing rule. The "smells like" links are the comparisons most commonly made for each perfume; check them before you advertise them.
 ## Custom domain (later)
 
 Not active yet. When `thescentshelf.in` is ready:
@@ -131,4 +148,4 @@ Not active yet. When `thescentshelf.in` is ready:
 
 - No JavaScript libraries. Typefaces load from Google Fonts.
 - The Scent Finder runs entirely in the visitor's browser. Nothing typed into it is sent anywhere.
-- The header and footer are repeated in each HTML file. If you change a footer link, change it in all nine pages.
+- The header and footer are repeated in each HTML file. If you change a footer link, change it in all twelve pages.

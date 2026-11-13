@@ -53,6 +53,7 @@ function suggest() {
   let who = picked(document.getElementById('q-who'))[0] || '';
   let minLong = Number(picked(document.getElementById('q-long'))[0] || 0);
   let budget = Number(picked(document.getElementById('q-budget'))[0] || 0);
+  const where = picked(document.getElementById('q-tier'))[0] || 'shelf';
 
   const wantFam = new Map();
   tokens.forEach((t) => {
@@ -69,6 +70,7 @@ function suggest() {
 
   const scored = [];
   for (const p of catalog.products) {
+    if (where !== 'both' && p.tier !== where) continue;
     if (who && p.for !== who && p.for !== 'U') continue;
     if (minLong && p.longevity < minLong) continue;
     if (budget && (!p.planned_price_inr || p.planned_price_inr > budget)) continue;
@@ -132,6 +134,7 @@ function suggest() {
 }
 
 async function init() {
+  chips(document.getElementById('q-tier'), [['shelf', 'The shelf (affordable)'], ['lux', 'Lux (designer and niche)'], ['both', 'Both']], false);
   chips(document.getElementById('q-family'), Object.entries(FAMILIES), true);
   chips(document.getElementById('q-notes'), NOTE_CHIPS.map((n) => [n, n]), true);
   chips(document.getElementById('q-who'), [['M', 'Masculine'], ['W', 'Feminine'], ['', 'No preference']], false);
