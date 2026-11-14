@@ -222,6 +222,47 @@ if (location.hash === '#join') {
 }
 observeReveal();
 
+// Chip rows that scroll sideways (scent filters on small screens): arrows and faded
+// edges show there is more, and a mouse wheel scrolls them sideways.
+export function scrollers(scope = document) {
+  scope.querySelectorAll('.chips:not(.chips--wrap):not([data-scroller])').forEach((row) => {
+    row.dataset.scroller = '';
+    const box = document.createElement('div');
+    box.className = 'scroller';
+    row.before(box);
+    box.append(row);
+    const step = (dir) => row.scrollBy({ left: dir * Math.max(160, row.clientWidth * 0.7), behavior: motionOK ? 'smooth' : 'auto' });
+    ['prev', 'next'].forEach((dir) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'scroller__btn scroller__btn--' + dir;
+      b.setAttribute('aria-label', dir === 'prev' ? 'Show earlier filters' : 'Show more filters');
+      b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + (dir === 'prev' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7') + '"/></svg>';
+      b.addEventListener('click', () => step(dir === 'prev' ? -1 : 1));
+      box.append(b);
+    });
+    const update = () => {
+      const max = row.scrollWidth - row.clientWidth;
+      box.classList.toggle('can-prev', row.scrollLeft > 4);
+      box.classList.toggle('can-next', row.scrollLeft < max - 4);
+    };
+    row.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(update).observe(row);
+    new MutationObserver(update).observe(row, { childList: true });
+    row.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      const max = row.scrollWidth - row.clientWidth;
+      if (max <= 0 || (e.deltaY < 0 && row.scrollLeft <= 0) || (e.deltaY > 0 && row.scrollLeft >= max)) return;
+      row.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }, { passive: false });
+    // keep the pressed chip in view
+    row.addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) c.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: motionOK ? 'smooth' : 'auto' }); });
+    update();
+  });
+}
+scrollers();
+
 // Animated ASCII: live night skies in the dark bands and on Lux, labels that decode.
 import('./ascii.js').then(({ skies, luxSky, animateIn }) => {
   skies();

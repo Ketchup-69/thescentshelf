@@ -587,3 +587,48 @@ canvas.ascii-sky { position: fixed; inset: 0; width: 100vw; height: 100vh; z-ind
 .sl-intro { max-width: 70ch; }
 .pf-static .price { margin: 10px 0; }
 .page-head + .answers { border-top: 0; margin-top: 8px; padding-top: 4px; }
+
+/* ---------- Filter chip rows: arrows and faded edges when there is more ---------- */
+.scroller { position: relative; min-width: 0; }
+.tools > *, .tools__row > * { min-width: 0; }
+.tools__row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (min-width: 620px) { .tools__row { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); } }
+.tools .select, .tools .input { width: 100%; }
+.scroller .chips { scroll-snap-type: x proximity; }
+.scroller .chip { scroll-snap-align: start; }
+.scroller.can-next .chips { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent); }
+.scroller.can-prev .chips { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 72px), transparent); mask-image: linear-gradient(to left, #000 calc(100% - 72px), transparent); }
+.scroller.can-prev.can-next .chips { -webkit-mask-image: linear-gradient(to right, transparent, #000 72px, #000 calc(100% - 72px), transparent); mask-image: linear-gradient(to right, transparent, #000 72px, #000 calc(100% - 72px), transparent); }
+.scroller__btn { position: absolute; top: 50%; z-index: 2; width: 36px; height: 36px; margin-top: -19px; display: none; place-items: center; padding: 0; border: 2px solid var(--ink); background: var(--card); color: var(--ink); cursor: pointer; }
+.scroller__btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.6; }
+.scroller__btn--prev { left: 0; }
+.scroller__btn--next { right: 0; }
+.scroller.can-prev .scroller__btn--prev, .scroller.can-next .scroller__btn--next { display: grid; }
+.scroller__btn:hover, .scroller__btn:focus-visible { background: var(--red); border-color: var(--red); color: #fff; }
+@media (min-width: 900px) {
+  .scroller .chips { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none !important; mask-image: none !important; }
+  .scroller__btn { display: none !important; }
+}
+
+/* ---------- Page transition: shelf <-> Lux (js/vt.js) ---------- */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+html:active-view-transition-type(to-lux, to-shelf)::view-transition-old(root),
+html:active-view-transition-type(to-lux, to-shelf)::view-transition-new(root) { mix-blend-mode: normal; animation-duration: 1s; animation-fill-mode: both; }
+html:active-view-transition-type(to-lux, to-shelf)::view-transition-new(root) { animation-name: vt-cut; z-index: 2; }
+html:active-view-transition-type(to-lux, to-shelf)::view-transition-old(root) { animation-name: vt-push; z-index: 1; }
+html:active-view-transition-type(to-lux, to-shelf)::view-transition-group(root) { background: #E10A1E; }
+/* A rough diagonal: it opens as a hairline cut, then the new page rushes out to both sides. */
+@keyframes vt-cut {
+  0% { clip-path: polygon(62% 0, 57.5% 16%, 56% 33%, 48.5% 50%, 47.5% 66%, 41% 83%, 38% 100%, 38% 100%, 41% 83%, 47.5% 66%, 48.5% 50%, 56% 33%, 57.5% 16%, 62% 0); animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  22% { clip-path: polygon(61.2% 0, 56.7% 16%, 55.2% 33%, 47.7% 50%, 46.7% 66%, 40.2% 83%, 37.2% 100%, 38.8% 100%, 41.8% 83%, 48.3% 66%, 49.3% 50%, 56.8% 33%, 58.3% 16%, 62.8% 0); animation-timing-function: cubic-bezier(0.8, 0, 0.15, 1); }
+  100% { clip-path: polygon(-48% 0, -52.5% 16%, -54% 33%, -61.5% 50%, -62.5% 66%, -69% 83%, -72% 100%, 148% 100%, 151% 83%, 157.5% 66%, 158.5% 50%, 166% 33%, 167.5% 16%, 172% 0); }
+}
+@keyframes vt-push {
+  0%, 22% { transform: none; filter: none; }
+  100% { transform: scale(0.94); filter: brightness(0.6); }
+}
+.nav-finder-icon { display: none !important; }
+@media (max-width: 419px) { .nav-finder-icon { display: inline-grid !important; } .site-nav > a:not(.nav-icon) { padding-left: 8px; padding-right: 8px; } }
+@media (max-width: 419px) { .nav-icon { width: 36px; } }
+@media (max-width: 349px) { .logo { font-size: 0.95rem; } }
