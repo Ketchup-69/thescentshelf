@@ -23,6 +23,8 @@ It is a plain static site: HTML, CSS and JavaScript files, with no build step. W
 | `js/profile.js` | How accords, projection, seasons and similar perfumes are worked out from the data |
 | `apps-script/Code.gs` | The script that saves waitlist signups into your Google Sheet |
 | `serve.ps1` | Runs the site on your own computer |
+| `js/ascii.js` | The animated ASCII: hero headline, night skies, scent smoke, ASCII bars, decoding labels, receipt printer |
+| `js/receipt.js` | What goes on the till receipts (home page, perfume pages, after reserving in the bag) |
 ## Run it on your computer
 
 Right-click `serve.ps1` and choose **Run with PowerShell**, then open <http://localhost:5173/>. Close the window to stop. Nothing is installed.
@@ -113,6 +115,16 @@ Names, sizes and prices were collected on 13 November 2026 from public listings 
 - **Refunds.** All sales are final except damaged, wrong or non-genuine items (required under Indian consumer rules, and needed for Razorpay approval). Fill in the `[TO CONFIRM]` claim window and timelines on `refunds.html`.
 
 Extra Arabic houses (Armaf, Maison Alhambra, Al Haramain, Khadlaj, Zimaya, Paris Corner, Swiss Arabian, Arabiyat) were added on 13 November 2026 from public listings on Indian retailers, with the same pricing rule. The "smells like" links are the comparisons most commonly made for each perfume; check them before you advertise them.
+## Animated ASCII
+
+- **Hero headline** (home): drawn in characters on a canvas. The real headline is still in the page, hidden visually, for Google and screen readers.
+- **Night sky**: any section with the class `stars` gets a live ASCII sky. Lux pages get one fixed sky behind the whole page.
+- **Scent smoke**: the red offer band on the home page.
+- **ASCII bars and counting numbers**: swap cards, perfume pages. Add `ameterHTML(value 0 to 1, width)` for a bar and `data-countup="2900" data-fmt="inr"` on a number.
+- **Receipts**: home page, perfume pages with a "smells like" match, and after reserving in the bag.
+- Every effect pauses when off screen. Visitors whose device asks for reduced motion get still versions.
+- `ascii-preview.html` is a local test page and is not uploaded to the live site.
+
 ## Custom domain (later)
 
 Not active yet. When `thescentshelf.in` is ready:

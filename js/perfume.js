@@ -2,6 +2,10 @@
 import { loadCatalog, cardHTML, esc, dots, priceHTML, moneyHTML, inr, saving, perfumeHref, FAMILIES, WHO, STATUS_LABEL } from './app.js';
 import { profile, similar, barsHTML, ACCORDS } from './profile.js';
 import { store } from './store.js';
+import { ameterHTML, animateIn, luxSky, onReveal } from './ascii.js';
+import { shellHTML, printSwap } from './receipt.js';
+
+const bar = (v, n, w) => ameterHTML(v / 5, w) + ' <span data-countup="' + n + '" data-fmt="five">' + n.toFixed(1) + '/5</span>';
 
 const rootEl = document.getElementById('perfume-root');
 const TIERS = [
@@ -32,20 +36,20 @@ function compareHTML(p) {
   if (longWin === true) line += ', and it lasts longer';
   line += '.';
   return (
-    '<section class="vs">' +
+    '<div class="vs-wrap"><section class="vs">' +
     '<p class="label">The swap</p>' +
     '<h2 class="vs__title">' + line + '</h2>' +
     '<div class="vs__scroll"><table class="vs__table">' +
     '<thead><tr><th></th><th scope="col">' + esc(p.name) + '<small>' + esc(p.brandInfo.name) + '</small></th><th scope="col"><a href="' + perfumeHref(o) + '">' + esc(o.name) + '</a><small>' + esc(o.brandInfo.name) + '</small></th></tr></thead>' +
     '<tbody>' +
     verdictRow('Price', price(p), price(o), priceWin) +
-    verdictRow('Longevity', dots(p.longevity), dots(o.longevity), longWin) +
-    verdictRow('Projection', dots(pp.projection), dots(po.projection), projWin) +
+    verdictRow('Longevity', bar(p.longevity, p.longevity, 10), bar(o.longevity, o.longevity, 10), longWin) +
+    verdictRow('Projection', bar(pp.projection, pp.projection, 10), bar(po.projection, po.projection, 10), projWin) +
     verdictRow('Size', esc(p.size_ml + ' ml'), esc(o.size_ml + ' ml'), null) +
     verdictRow('Notes', esc(p.notes.join(', ')), esc(o.notes.join(', ')), null) +
     '</tbody></table></div>' +
     '<p class="fineprint">"Smells like" is the comparison people make most often for this perfume. It is a different product, not made by or connected to ' + esc(o.brandInfo.name) + '. Longevity and projection are our estimates.</p>' +
-    '</section>'
+    '</section>' + (p.planned_price_inr && o.planned_price_inr ? shellHTML('pf') : '') + '</div>'
   );
 }
 
@@ -65,6 +69,7 @@ async function init() {
   const lux = p.tier === 'lux';
   if (lux) {
     document.documentElement.classList.add('lux');
+    luxSky();
     document.querySelectorAll('.site-nav a[href="./lux.html"]').forEach((a) => a.setAttribute('aria-current', 'page'));
   }
   const pr = profile(p);
@@ -75,7 +80,8 @@ async function init() {
 
   const pyramid = '<ol class="pyramid">' + p.notes.slice(0, 3).map((n, i) => '<li class="pyramid__tier pyramid__tier--' + (i + 1) + '"><span class="pyramid__when">' + TIERS[i][0] + '</span><strong>' + esc(n) + '</strong><small>' + TIERS[i][1] + '</small></li>').join('') + '</ol>';
   const accords = barsHTML(pr.accords.map((a) => ({ label: esc(a.name), pct: a.pct, name: a.name })), (it) => ACCORDS[it.name] || 'var(--ink)');
-  const wear = barsHTML(pr.wear.map((w) => ({ label: w.label, pct: w.pct })), () => 'var(--red)');
+  const aw = innerWidth < 600 ? 14 : 22;
+  const wear = '<div class="abars">' + pr.wear.map((w) => '<div class="abar"><span>' + w.label + '</span>' + ameterHTML(w.pct / 100, aw) + '<span data-countup="' + Math.round(w.pct) + '">' + Math.round(w.pct) + '</span></div>').join('') + '</div>';
   const verdict = 'Best in <strong>' + pr.best.toLowerCase() + '</strong>, for <strong>' + pr.time + '</strong>.';
 
   const twinsHere = (catalog.twinsOf.get(p.id) || []).slice().sort((a, b) => (a.planned_price_inr || 1e9) - (b.planned_price_inr || 1e9));
@@ -115,14 +121,17 @@ async function init() {
       section('Profile', 'Main accords', accords) +
       section('Notes', 'How it unfolds', pyramid) +
       section('Performance', 'How it wears',
-        '<div class="meter"><span>Longevity</span>' + dots(p.longevity) + '</div>' +
-        '<div class="meter"><span>Projection</span>' + dots(pr.projection) + '</div>' +
+        '<div class="meter"><span>Longevity</span>' + bar(p.longevity, p.longevity, aw) + '</div>' +
+        '<div class="meter"><span>Projection</span>' + bar(pr.projection, pr.projection, aw) + '</div>' +
         '<p class="fineprint">Our estimates. Skin, heat and how much you spray all change this.</p>') +
       section('When to wear', 'Season and time', wear + '<p class="verdict">' + verdict + '</p>') +
     '</div>' +
     forLess +
     (sameHouse.length ? '<section class="row"><p class="label">Same house</p><h2>More from <span class="it red">' + esc(p.brandInfo.name) + '.</span></h2><div class="grid">' + sameHouse.map((x) => cardHTML(x)).join('') + '</div></section>' : '') +
     '<p class="fineprint pf-foot">Scent profiles on this page are worked out by The Scent Shelf from each perfume\'s listed notes. They are a guide, not a guarantee.</p>';
+  animateIn(rootEl);
+  const printer = document.getElementById('pf-printer');
+  if (printer) onReveal([printer], () => printSwap(printer, document.getElementById('pf-paper'), p));
 }
 
 init();

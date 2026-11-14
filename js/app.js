@@ -219,3 +219,10 @@ if (location.hash === '#join') {
   openWaitlist([]);
 }
 observeReveal();
+
+// Animated ASCII: live night skies in the dark bands and on Lux, labels that decode.
+import('./ascii.js').then(({ skies, luxSky, animateIn }) => {
+  skies();
+  if (root.classList.contains('lux')) luxSky();
+  animateIn();
+}).catch(() => {});

@@ -2,6 +2,7 @@
 // to this device's order history and sends it to the waitlist sheet.
 import { loadCatalog, esc, inr, usd, moneyHTML, toINR, toUSD, perfumeHref, sizeLine, observeReveal } from './app.js';
 import { store } from './store.js';
+import { shellHTML, printOrder } from './receipt.js';
 import { WAITLIST_ENDPOINT, DELIVERY_FEE_INR, BUY_X_GET_ONE, FOUNDER_DELIVERY_USD } from './config.js';
 
 const rootEl = document.getElementById('bag-root');
@@ -154,8 +155,9 @@ async function submit(form) {
       '<p class="lede">Nothing has been charged. We\'ll contact you at ' + esc(contact) + ' when we launch to confirm and take payment.</p>' +
       (position ? '<p class="wl__pos">You are <strong>#' + Number(position) + '</strong> in line.</p>' : '') +
       (delivery === 'founder' ? '<p class="notice">You picked founder hand-delivery. The founder will be in touch personally to arrange it.</p>' : '') +
-      '<div class="hero__cta"><a class="btn btn--lg" href="./account.html">See my orders</a><a class="btn btn--line btn--lg" href="./shop.html">Keep browsing</a></div></div>';
+      '<div class="hero__cta"><a class="btn btn--lg" href="./account.html">See my orders</a><a class="btn btn--line btn--lg" href="./shop.html">Keep browsing</a></div>' + shellHTML('order') + '</div>';
     scrollTo({ top: 0 });
+    printOrder(document.getElementById('order-printer'), document.getElementById('order-paper'), order, ls, t, delivery === 'founder');
   } catch (e) {
     err.textContent = 'Sorry, that didn\'t go through and nothing was saved. Please try again in a moment.';
     err.hidden = false;
