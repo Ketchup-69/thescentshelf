@@ -297,7 +297,7 @@ const pick = (s) => s[(Math.random() * s.length) | 0];
 // lines: [{ text, font: (px) => CSS font, f: relative size, layer }], or (width) => such a list
 export function textField(canvas, o) {
   let parts = [], first = true;
-  const linesFor = (w) => (typeof o.lines === 'function' ? o.lines(w) : o.lines);
+  const linesFor = (w, h) => (typeof o.lines === 'function' ? o.lines(w, h) : o.lines);
   const st = mount(canvas, {
     cell: o.cell || ((w) => (w < 520 ? 5 : 6.5)),
     weight: '500',
@@ -317,7 +317,7 @@ export function textField(canvas, o) {
       off.width = Math.ceil(st.w); off.height = Math.ceil(st.h);
       const c = off.getContext('2d');
       // size the lines so the block fills the width without overflowing the height
-      const lines = linesFor(st.w);
+      const lines = linesFor(st.w, st.h);
       const m = lines.map((L) => { c.font = L.font(100); const t = c.measureText(L.text); return { w: t.actualBoundingBoxRight, a: t.actualBoundingBoxAscent, d: t.actualBoundingBoxDescent }; });
       let B = Infinity, hSum = 0;
       lines.forEach((L, i) => { B = Math.min(B, (st.w * 0.97 * 100) / (m[i].w * L.f)); hSum += ((m[i].a + m[i].d) / 100 + 0.07) * L.f; });
@@ -382,7 +382,7 @@ export function textField(canvas, o) {
       }
     },
   });
-  if (document.fonts) Promise.all(linesFor(9999).map((L) => document.fonts.load(L.font(48), L.text))).then(() => { st.refresh(); first = false; });
+  if (document.fonts) Promise.all(linesFor(9999, 1).map((L) => document.fonts.load(L.font(48), L.text))).then(() => { st.refresh(); first = false; });
   else first = false;
   return st;
 }

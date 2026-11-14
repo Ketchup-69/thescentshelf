@@ -17,10 +17,10 @@ if (h1) {
   const display = (px) => '900 ' + px + 'px "Big Shoulders Display"';
   textField(box.firstChild, {
     target: box,
-    // On narrow screens "SMELL GOOD." splits over two lines so the letters can be bigger.
-    lines: (w) => {
+    // In a tall, narrow box "SMELL GOOD." splits over two lines so the letters can be bigger.
+    lines: (w, h) => {
       const spend = { text: 'Spend', font: (px) => 'italic 400 ' + px + 'px "Instrument Serif"', f: 0.62, layer: 'r' };
-      return w < 600
+      return w / h < 1.25
         ? [{ text: 'SMELL', font: display, f: 1 }, { text: 'GOOD.', font: display, f: 1 }, spend, { text: 'LESS.', font: display, f: 1 }]
         : [{ text: 'SMELL GOOD.', font: display, f: 1 }, spend, { text: 'LESS.', font: display, f: 1 }];
     },
