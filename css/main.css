@@ -570,3 +570,20 @@ canvas.ascii-sky { position: fixed; inset: 0; width: 100vw; height: 100vh; z-ind
   .rc--big { font-size: 26px; }
   .abar { grid-template-columns: 84px 1fr auto; gap: 6px; }
 }
+
+/* ---------- Quick answers, house lists, smells-like pages (written by build.ps1) ---------- */
+.answers { margin: 44px 0 8px; border-top: 2px solid var(--rule); padding-top: 22px; display: grid; gap: 8px; }
+.answers h2 { font-size: clamp(2rem, 7vw, 3rem); }
+.qa { margin: 6px 0 0; }
+.qa > div { padding: 16px 0; border-bottom: 1px solid var(--soft); display: grid; gap: 6px; }
+.qa dt { font-family: var(--serif); font-size: clamp(1.25rem, 4vw, 1.55rem); line-height: 1.15; }
+.qa dd { margin: 0; color: var(--ink-2); max-width: 70ch; line-height: 1.55; }
+.qa a { color: var(--red-ink); }
+.seo-list { list-style: none; padding: 0; margin: 18px 0 40px; display: grid; gap: 0 24px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.seo-list li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--soft); }
+.seo-list a { text-decoration: none; font-family: var(--serif); font-size: 1.2rem; line-height: 1.15; }
+.seo-list a:hover { color: var(--red); }
+.seo-list span { font-family: var(--mono); font-size: 0.75rem; white-space: nowrap; color: var(--ink-2); }
+.sl-intro { max-width: 70ch; }
+.pf-static .price { margin: 10px 0; }
+.page-head + .answers { border-top: 0; margin-top: 8px; padding-top: 4px; }

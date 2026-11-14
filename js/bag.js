@@ -10,6 +10,7 @@ const isLocal = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 const CONSENT_TEXT = 'I agree to be contacted about my reservation and launch updates.';
 let catalog;
 let delivery = 'standard';
+const loadedAt = Date.now();
 
 function lines() {
   return Object.entries(store.bag)
@@ -85,6 +86,7 @@ function render() {
         '<div class="field"><label for="co-city">City</label><input class="input" id="co-city" name="city" autocomplete="address-level2" maxlength="80" value="' + esc(c.city || '') + '" required></div>' +
         '<label class="check"><input type="checkbox" name="consent" id="co-consent"><span>' + CONSENT_TEXT + ' <a href="./privacy.html" target="_blank" rel="noopener">Privacy notice</a></span></label>' +
         '<label class="check"><input type="checkbox" name="final" id="co-final"><span>I understand all sales are final once paid, except for damaged or wrong items. <a href="./refunds.html" target="_blank" rel="noopener">Refund policy</a></span></label>' +
+        '<div class="hp" aria-hidden="true"><label for="co-website">Leave this empty</label><input id="co-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>' +
         '<p class="form-error" id="co-error" role="alert" hidden></p>' +
         '<button class="btn btn--red btn--lg btn--block" type="submit" id="co-submit">Reserve my order, pay at launch</button>' +
         '<p class="fineprint">USD shown at ₹' + Math.round(toINR(1)) + ' = $1, for reference. You will pay in rupees.</p>' +
@@ -126,13 +128,16 @@ async function submit(form) {
   const perfumes = ls.map((l) => l.p.brandInfo.name + ' ' + l.p.name + (l.qty > 1 ? ' x' + l.qty : ''));
   try {
     let position = null;
-    if (WAITLIST_ENDPOINT) {
+    if (fd.get('website')) {
+      // filled-in trap field: a bot. Nothing is sent.
+    } else if (WAITLIST_ENDPOINT) {
       const res = await fetch(WAITLIST_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
           name, contact, city, perfumes, consent: true, consentText: CONSENT_TEXT,
           page: ('checkout | ' + t.count + ' bottles | ' + (delivery === 'founder' ? 'FOUNDER DELIVERY' : 'standard') + ' | est ' + inr(t.total)).slice(0, 120),
+          ms: Date.now() - loadedAt, website: '',
         }),
       });
       const data = await res.json();

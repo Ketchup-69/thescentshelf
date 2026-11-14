@@ -1,5 +1,5 @@
-// One page per perfume: perfume.html?id=<product id>
-import { loadCatalog, cardHTML, esc, dots, priceHTML, moneyHTML, inr, saving, perfumeHref, FAMILIES, WHO, STATUS_LABEL } from './app.js';
+// One page per perfume: perfume/<product id>/ (written by build.ps1, which sets data-id on #perfume-root).
+import { loadCatalog, cardHTML, esc, dots, priceHTML, moneyHTML, inr, saving, perfumeHref, houseHref, FAMILIES, WHO, STATUS_LABEL } from './app.js';
 import { profile, similar, barsHTML, ACCORDS } from './profile.js';
 import { store } from './store.js';
 import { ameterHTML, animateIn, luxSky, onReveal } from './ascii.js';
@@ -61,11 +61,13 @@ async function init() {
     rootEl.innerHTML = '<p class="notice">This page could not be loaded. Please refresh.</p>';
     return;
   }
-  const p = catalog.byId.get(new URLSearchParams(location.search).get('id') || '');
+  const p = catalog.byId.get(rootEl.dataset.id || new URLSearchParams(location.search).get('id') || '');
   if (!p) {
     rootEl.innerHTML = '<header class="page-head"><p class="label">Not found</p><h1>That shelf is <span class="it red">empty.</span></h1><p>We could not find that perfume.</p><p><a class="btn" href="./shop.html">Back to the shop</a></p></header>';
     return;
   }
+  // Old perfume.html?id= links move to the perfume's own page.
+  if (!rootEl.dataset.id) { location.replace(perfumeHref(p)); return; }
   const lux = p.tier === 'lux';
   if (lux) {
     document.documentElement.classList.add('lux');
@@ -99,7 +101,7 @@ async function init() {
     : (similarShelf.length ? '<section class="row"><p class="label">Close matches</p><h2>Similar on <span class="it red">the shelf.</span></h2><div class="grid">' + similarShelf.map((x) => cardHTML(x)).join('') + '</div></section>' : '');
 
   rootEl.innerHTML =
-    '<nav class="crumbs label" aria-label="Breadcrumb"><a href="' + (lux ? './lux.html' : './shop.html') + '">' + (lux ? 'Lux' : 'Shop') + '</a> / <a href="' + (lux ? './lux.html' : './shop.html') + '?brand=' + encodeURIComponent(p.brand) + '">' + esc(p.brandInfo.name) + '</a> / No. ' + String(p.no).padStart(3, '0') + '</nav>' +
+    '<nav class="crumbs label" aria-label="Breadcrumb"><a href="' + (lux ? './lux.html' : './shop.html') + '">' + (lux ? 'Lux' : 'Shop') + '</a> / <a href="' + houseHref(p.brand) + '">' + esc(p.brandInfo.name) + '</a> / No. ' + String(p.no).padStart(3, '0') + '</nav>' +
     '<header class="pf-head">' +
       '<div class="pf-head__main">' +
         '<p class="pf-brand">' + esc(p.brandInfo.name) + '</p>' +

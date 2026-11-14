@@ -1,0 +1,7 @@
+# The Scent Shelf. Search engines and AI assistants are welcome.
+User-agent: *
+Allow: /
+Disallow: /thescentshelf/bag.html
+Disallow: /thescentshelf/account.html
+
+Sitemap: https://ketchup-69.github.io/thescentshelf/sitemap.xml

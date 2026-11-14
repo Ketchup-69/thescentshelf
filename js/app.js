@@ -83,7 +83,9 @@ export function sizeLine(p) {
   return [p.size_ml ? p.size_ml + ' ml' : '', SHORT[p.concentration] || p.concentration || ''].filter(Boolean).join(' ');
 }
 
-export const perfumeHref = (p) => './perfume.html?id=' + encodeURIComponent(p.id);
+// Every perfume has its own page, written by build.ps1.
+export const perfumeHref = (p) => './perfume/' + encodeURIComponent(p.id) + '/';
+export const houseHref = (id) => './house/' + encodeURIComponent(id) + '/';
 
 function heart(p) {
   const on = store.isSaved(p.id);

@@ -68,7 +68,8 @@ async function init() {
     Object.entries(FAMILIES).map(([k, v]) => '<button class="chip" type="button" data-fam="' + k + '" aria-pressed="false">' + v + '</button>').join('');
 
   const params = new URLSearchParams(location.search);
-  if (params.get('brand') && brands.some((b) => b.id === params.get('brand'))) brandSel.value = params.get('brand');
+  const pre = params.get('brand') || document.body.dataset.brand; // house pages set data-brand
+  if (pre && brands.some((b) => b.id === pre)) brandSel.value = pre;
   if (params.get('q')) search.value = params.get('q');
   if (params.get('filter') === 'twins' && tier === 'shelf') {
     family = 'twins';

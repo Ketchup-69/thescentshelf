@@ -194,6 +194,7 @@ export async function open(ids = []) {
   });
   updateCount();
   dialog.querySelector('#wl-error').hidden = true;
+  openedAt = Date.now();
   openDialog(dialog);
   const first = ids.length && form.querySelector('input[name="perfumes"]:checked');
   if (first) {
@@ -201,6 +202,8 @@ export async function open(ids = []) {
     picker.scrollTop = Math.max(0, first.closest('.pick').offsetTop - 40);
   }
 }
+
+let openedAt = Date.now();
 
 async function send(payload) {
   const ctrl = new AbortController();
@@ -273,6 +276,8 @@ async function onSubmit(e) {
         consent: true,
         consentText: CONSENT_TEXT,
         page: location.pathname,
+        ms: Date.now() - openedAt, // how long the form was open: the sheet ignores instant, scripted posts
+        website: '',
       });
     }
     if (!result || result.ok !== true) throw new Error((result && result.error) || 'Signup was not accepted');

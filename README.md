@@ -115,6 +115,27 @@ Names, sizes and prices were collected on 13 November 2026 from public listings 
 - **Refunds.** All sales are final except damaged, wrong or non-genuine items (required under Indian consumer rules, and needed for Razorpay approval). Fill in the `[TO CONFIRM]` claim window and timelines on `refunds.html`.
 
 Extra Arabic houses (Armaf, Maison Alhambra, Al Haramain, Khadlaj, Zimaya, Paris Corner, Swiss Arabian, Arabiyat) were added on 13 November 2026 from public listings on Indian retailers, with the same pricing rule. The "smells like" links are the comparisons most commonly made for each perfume; check them before you advertise them.
+## Search engines, AI assistants and security
+
+**Run `build.ps1` after every change to `data/products.json`** (right-click > Run with PowerShell, or `powershell -ExecutionPolicy Bypass -File build.ps1`), then upload. It writes:
+
+- `perfume/<id>/`: one real page per perfume, with quick answers ("What does it smell like?", "How long does it last?", "Is it like …?", the price) and structured data for Google.
+- `house/<id>/`: one page per house. `smells-like/<id>/` and `smells-like/`: the shelf perfumes compared to each designer bottle.
+- `faq.html` (edit the questions inside `build.ps1`), `sitemap.xml`, `robots.txt`, `llms.txt` and the structured data at the top of `index.html`.
+
+When the custom domain is live, run `build.ps1 -Base https://thescentshelf.in/`. It also updates the addresses in the hand-written pages.
+
+Old `perfume.html?id=...` links still work: they forward to the perfume's own page.
+
+Security already in place:
+
+- Every page has a Content Security Policy: scripts only from this site, and forms only send to Google's script server.
+- Fonts are served from this site (`fonts/`, `css/fonts.css`), so visitors' browsers don't contact Google Fonts.
+- The waitlist and the checkout have a hidden trap field and send how long the form was open. `apps-script/Code.gs` ignores bots and instant posts, checks the phone or email, and limits signups (30 a minute in total, 5 attempts per contact every 10 minutes). **After changing `Code.gs`, paste it into Apps Script and use Deploy > Manage deployments > Edit > New version.**
+- "Forget me on this device" on My shelf clears everything the site stored in that browser.
+
+GitHub Pages can't send security headers such as HSTS or frame protection. Putting Cloudflare (free) in front of the custom domain adds them.
+
 ## Animated ASCII
 
 - **Hero headline** (home): drawn in characters on a canvas. The real headline is still in the page, hidden visually, for Google and screen readers.

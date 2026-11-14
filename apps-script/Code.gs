@@ -11,20 +11,37 @@ function doGet() {
   return json_({ ok: true, service: 'The Scent Shelf waitlist' });
 }
 
+// Spam limits. The web address of this script is public (it is in js/config.js),
+// so anyone could post to it. These checks keep junk out of the sheet.
+var MAX_BODY = 8000;          // characters in one request
+var MIN_FORM_MS = 2500;       // a person takes longer than this to fill in the form
+var MAX_PER_MINUTE = 30;      // signups from everyone, per minute
+var MAX_PER_CONTACT = 5;      // attempts with the same phone or email, per 10 minutes
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
   try {
-    lock.waitLock(20000);
-    var data = JSON.parse(e.postData.contents);
+    var body = e && e.postData ? String(e.postData.contents || '') : '';
+    if (!body || body.length > MAX_BODY) return json_({ ok: false, error: 'Bad request' });
+    var data = JSON.parse(body);
+    // Bots: a filled-in hidden field, or a form "filled in" faster than a person could. Pretend it worked, save nothing.
+    if (data.website) return json_({ ok: true, position: null });
+    if (typeof data.ms !== 'number' || data.ms < MIN_FORM_MS) return json_({ ok: true, position: null });
+
     var name = clean_(data.name, 80);
     var contact = clean_(data.contact, 120);
     var city = clean_(data.city, 80);
     var perfumes = (Array.isArray(data.perfumes) ? data.perfumes : []).slice(0, 40).map(function (p) { return clean_(p, 80); }).filter(String);
-    if (name.length < 2 || contact.length < 5 || city.length < 2 || !perfumes.length) return json_({ ok: false, error: 'Missing details' });
+    if (name.length < 2 || city.length < 2 || !perfumes.length || !validContact_(contact)) return json_({ ok: false, error: 'Missing details' });
     if (data.consent !== true) return json_({ ok: false, error: 'Consent is required' });
 
+    var key = contact.toLowerCase().replace(/[\s()'-]/g, '');
+    var cache = CacheService.getScriptCache();
+    if (bump_(cache, 'all:' + Math.floor(Date.now() / 60000), 70) > MAX_PER_MINUTE) return json_({ ok: false, error: 'Busy, try again in a minute' });
+    if (bump_(cache, 'c:' + key, 600) > MAX_PER_CONTACT) return json_({ ok: false, error: 'Too many attempts' });
+
+    lock.waitLock(20000);
     var sheet = sheet_();
-    var key = contact.toLowerCase().replace(/[\s()-]/g, '');
     var rows = sheet.getLastRow() - 1;
     if (rows > 0) {
       var existing = sheet.getRange(2, 3, rows, 1).getValues();
@@ -50,6 +67,21 @@ function sheet_() {
     sheet.setFrozenRows(1);
   }
   return sheet;
+}
+
+// A 10 to 13 digit phone number, or an email address.
+function validContact_(value) {
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) return true;
+  if (/[^\d\s()+-]/.test(value)) return false;
+  var digits = value.replace(/\D/g, '');
+  return digits.length >= 10 && digits.length <= 13;
+}
+
+// Adds one to a short-lived counter and returns the new count.
+function bump_(cache, key, seconds) {
+  var n = Number(cache.get(key) || 0) + 1;
+  cache.put(key, String(n), seconds);
+  return n;
 }
 
 function clean_(value, max) {

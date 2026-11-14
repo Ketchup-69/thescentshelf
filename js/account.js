@@ -63,6 +63,11 @@ function render() {
 
     '<section class="row"><p class="label">Saved</p><h2>Your <span class="it red">list.</span></h2>' +
       (saved.length ? '<div class="grid">' + saved.map((p) => cardHTML(p)).join('') + '</div>' : '<p class="row__note">Tap the heart on any perfume to save it here.</p>') +
+    '</section>' +
+
+    '<section class="row"><p class="label">Your data</p><h2>Forget me <span class="it red">on this device.</span></h2>' +
+      '<p class="row__note">Clears your bag, saved list, preferences, order history and contact details from this browser. Reservations already sent to us are not affected: to have those deleted, <a href="./contact.html">contact us</a>.</p>' +
+      '<p><button class="btn btn--line" type="button" id="forget">Forget me on this device</button></p>' +
     '</section>';
 }
 
@@ -75,6 +80,12 @@ async function init() {
   }
   render();
   rootEl.addEventListener('click', (e) => {
+    if (e.target.id === 'forget') {
+      if (!confirm('Clear everything The Scent Shelf has saved in this browser? This cannot be undone.')) return;
+      try { localStorage.removeItem('tss.v1'); } catch (err) { /* storage blocked: nothing saved anyway */ }
+      location.reload();
+      return;
+    }
     const chip = e.target.closest('[data-group] .chip');
     if (!chip) return;
     const group = chip.parentElement.dataset.group;

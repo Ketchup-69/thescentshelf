@@ -1,4 +1,4 @@
-import { loadCatalog, esc, observeReveal, inr, moneyHTML, saving, perfumeHref } from './app.js';
+import { loadCatalog, esc, observeReveal, inr, moneyHTML, saving, perfumeHref, houseHref } from './app.js';
 import { textField, smoke, ameterHTML, animateIn, onReveal } from './ascii.js';
 import { printSwap } from './receipt.js';
 
@@ -75,7 +75,7 @@ loadCatalog()
     shelves.innerHTML =
       '<div class="shelf reveal"><p class="shelf__no">The shelf · ' + shelfBrands.length + ' houses · ' + shelf.length + ' perfumes</p>' +
       '<h3 class="shelf__title">Arabic houses</h3>' +
-      '<p class="shelf__brands">' + shelfBrands.map((b) => '<a href="./shop.html?brand=' + encodeURIComponent(b.id) + '">' + esc(b.name) + '</a>').join('') + '</p></div>';
+      '<p class="shelf__brands">' + shelfBrands.map((b) => '<a href="' + houseHref(b.id) + '">' + esc(b.name) + '</a>').join('') + '</p></div>';
     observeReveal(document);
     animateIn(swaps);
 

@@ -1,0 +1,75 @@
+# The Scent Shelf
+
+> Online perfume shop for India, opening soon. Affordable perfumes from Arabic houses (Lattafa, Afnan, Rasasi, French Avenue, Rayhaan, Armaf, Maison Alhambra, Al Haramain, Khadlaj, Zimaya, Paris Corner, Swiss Arabian, Arabiyat), including ones commonly compared to designer bottles, with planned launch prices in rupees. Designer and niche perfumes are on a separate shelf called Lux. Nothing is on sale yet: customers reserve now and pay at launch.
+
+Scent families, notes and longevity on this site are The Scent Shelf's own estimates. "Smells like" names the designer perfume a bottle is most often compared to; the products are different and the designer brands are not affiliated. Prices are planned launch prices and may change.
+
+## Main pages
+- [Shop the shelf](https://ketchup-69.github.io/thescentshelf/shop.html): affordable Arabic perfumes, searchable by note, family and house
+- [Lux](https://ketchup-69.github.io/thescentshelf/lux.html): designer and niche perfumes
+- [Smells like](https://ketchup-69.github.io/thescentshelf/smells-like/): affordable alternatives to designer perfumes, side by side
+- [Scent Finder](https://ketchup-69.github.io/thescentshelf/find.html): a shortlist from a description, notes, budget or a designer perfume you like
+- [FAQ](https://ketchup-69.github.io/thescentshelf/faq.html): reserving, buy 5 get 1 free, delivery, refunds
+
+## Houses
+- [Lattafa](https://ketchup-69.github.io/thescentshelf/house/lattafa/): 20 perfumes
+- [Afnan](https://ketchup-69.github.io/thescentshelf/house/afnan/): 20 perfumes
+- [Rasasi](https://ketchup-69.github.io/thescentshelf/house/rasasi/): 20 perfumes
+- [French Avenue](https://ketchup-69.github.io/thescentshelf/house/french-avenue/): 20 perfumes
+- [Rayhaan](https://ketchup-69.github.io/thescentshelf/house/rayhaan/): 20 perfumes
+- [Armaf](https://ketchup-69.github.io/thescentshelf/house/armaf/): 14 perfumes
+- [Maison Alhambra](https://ketchup-69.github.io/thescentshelf/house/maison-alhambra/): 14 perfumes
+- [Al Haramain](https://ketchup-69.github.io/thescentshelf/house/al-haramain/): 10 perfumes
+- [Khadlaj](https://ketchup-69.github.io/thescentshelf/house/khadlaj/): 8 perfumes
+- [Zimaya](https://ketchup-69.github.io/thescentshelf/house/zimaya/): 6 perfumes
+- [Paris Corner](https://ketchup-69.github.io/thescentshelf/house/paris-corner/): 6 perfumes
+- [Swiss Arabian](https://ketchup-69.github.io/thescentshelf/house/swiss-arabian/): 5 perfumes
+- [Arabiyat](https://ketchup-69.github.io/thescentshelf/house/arabiyat/): 5 perfumes
+- [Dior](https://ketchup-69.github.io/thescentshelf/house/dior/): 20 perfumes (Lux)
+- [Chanel](https://ketchup-69.github.io/thescentshelf/house/chanel/): 20 perfumes (Lux)
+- [Hermès](https://ketchup-69.github.io/thescentshelf/house/hermes/): 20 perfumes (Lux)
+- [Yves Saint Laurent](https://ketchup-69.github.io/thescentshelf/house/ysl/): 20 perfumes (Lux)
+- [Prada](https://ketchup-69.github.io/thescentshelf/house/prada/): 20 perfumes (Lux)
+- [Hugo Boss](https://ketchup-69.github.io/thescentshelf/house/hugo-boss/): 20 perfumes (Lux)
+- [Bvlgari](https://ketchup-69.github.io/thescentshelf/house/bvlgari/): 20 perfumes (Lux)
+- [Dolce & Gabbana](https://ketchup-69.github.io/thescentshelf/house/dolce-gabbana/): 20 perfumes (Lux)
+- [Givenchy](https://ketchup-69.github.io/thescentshelf/house/givenchy/): 20 perfumes (Lux)
+- [Gucci](https://ketchup-69.github.io/thescentshelf/house/gucci/): 20 perfumes (Lux)
+- [Burberry](https://ketchup-69.github.io/thescentshelf/house/burberry/): 20 perfumes (Lux)
+- [Carolina Herrera](https://ketchup-69.github.io/thescentshelf/house/carolina-herrera/): 20 perfumes (Lux)
+- [Tom Ford](https://ketchup-69.github.io/thescentshelf/house/tom-ford/): 20 perfumes (Lux)
+- [Maison Margiela](https://ketchup-69.github.io/thescentshelf/house/maison-margiela/): 20 perfumes (Lux)
+- [Amouage](https://ketchup-69.github.io/thescentshelf/house/amouage/): 20 perfumes (Lux)
+- [Creed](https://ketchup-69.github.io/thescentshelf/house/creed/): 20 perfumes (Lux)
+- [Maison Francis Kurkdjian](https://ketchup-69.github.io/thescentshelf/house/mfk/): 20 perfumes (Lux)
+- [Parfums de Marly](https://ketchup-69.github.io/thescentshelf/house/parfums-de-marly/): 20 perfumes (Lux)
+- [Diptyque](https://ketchup-69.github.io/thescentshelf/house/diptyque/): 20 perfumes (Lux)
+- [Nishane](https://ketchup-69.github.io/thescentshelf/house/nishane/): 20 perfumes (Lux)
+- [Xerjoff](https://ketchup-69.github.io/thescentshelf/house/xerjoff/): 20 perfumes (Lux)
+- [Kilian](https://ketchup-69.github.io/thescentshelf/house/kilian/): 20 perfumes (Lux)
+- [Bond No. 9](https://ketchup-69.github.io/thescentshelf/house/bond-no-9/): 20 perfumes (Lux)
+
+## Smells like
+- [Perfumes that smell like Chanel Bleu de Chanel](https://ketchup-69.github.io/thescentshelf/smells-like/chanel-bleu-de-chanel/)
+- [Perfumes that smell like Chanel Coco Mademoiselle](https://ketchup-69.github.io/thescentshelf/smells-like/chanel-coco-mademoiselle/)
+- [Perfumes that smell like Creed Aventus](https://ketchup-69.github.io/thescentshelf/smells-like/creed-aventus/)
+- [Perfumes that smell like Creed Silver Mountain Water](https://ketchup-69.github.io/thescentshelf/smells-like/creed-silver-mountain-water/)
+- [Perfumes that smell like Dior Sauvage](https://ketchup-69.github.io/thescentshelf/smells-like/dior-sauvage/)
+- [Perfumes that smell like Dior Sauvage Elixir](https://ketchup-69.github.io/thescentshelf/smells-like/dior-sauvage-elixir/)
+- [Perfumes that smell like Kilian Angels' Share](https://ketchup-69.github.io/thescentshelf/smells-like/kilian-angels-share/)
+- [Perfumes that smell like Maison Francis Kurkdjian Baccarat Rouge 540](https://ketchup-69.github.io/thescentshelf/smells-like/mfk-baccarat-rouge-540/)
+- [Perfumes that smell like Nishane Hacivat](https://ketchup-69.github.io/thescentshelf/smells-like/nishane-hacivat/)
+- [Perfumes that smell like Parfums de Marly Althaïr](https://ketchup-69.github.io/thescentshelf/smells-like/parfums-de-marly-althair/)
+- [Perfumes that smell like Parfums de Marly Delina](https://ketchup-69.github.io/thescentshelf/smells-like/parfums-de-marly-delina/)
+- [Perfumes that smell like Parfums de Marly Greenley](https://ketchup-69.github.io/thescentshelf/smells-like/parfums-de-marly-greenley/)
+- [Perfumes that smell like Tom Ford Fucking Fabulous](https://ketchup-69.github.io/thescentshelf/smells-like/tom-ford-fucking-fabulous/)
+- [Perfumes that smell like Tom Ford Neroli Portofino](https://ketchup-69.github.io/thescentshelf/smells-like/tom-ford-neroli-portofino/)
+- [Perfumes that smell like Tom Ford Tobacco Vanille](https://ketchup-69.github.io/thescentshelf/smells-like/tom-ford-tobacco-vanille/)
+- [Perfumes that smell like Tom Ford Tuscan Leather](https://ketchup-69.github.io/thescentshelf/smells-like/tom-ford-tuscan-leather/)
+- [Perfumes that smell like Tom Ford Velvet Orchid](https://ketchup-69.github.io/thescentshelf/smells-like/tom-ford-velvet-orchid/)
+- [Perfumes that smell like Xerjoff Erba Pura](https://ketchup-69.github.io/thescentshelf/smells-like/xerjoff-erba-pura/)
+- [Perfumes that smell like Yves Saint Laurent Y](https://ketchup-69.github.io/thescentshelf/smells-like/ysl-y/)
+
+## Optional
+- [Sitemap](https://ketchup-69.github.io/thescentshelf/sitemap.xml): every perfume page
+- [Catalogue data](https://ketchup-69.github.io/thescentshelf/data/products.json): every product as JSON
